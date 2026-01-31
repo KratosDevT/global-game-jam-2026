@@ -1,49 +1,30 @@
+using System.Collections;
 using Script.Enums;
 using UnityEngine;
 
-public class Tile : MonoBehaviour
+public class Tile
 {
-    [System.Serializable]
-    public struct TileConnections
+    public int x, y;
+    public bool visited = false;
+    // an array for directions: 0=Nord, 1=Est, 2=Sud, 3=Ovest
+    public bool[] paths = new bool[4]; 
+
+    public Tile(int x, int y)
     {
-        public bool north;
-        public bool east;
-        public bool south;
-        public bool west;
+        this.x = x;
+        this.y = y;
     }
     
-    public TileConnections connections;
-    public Vector2Int gridPosition;
-    public GameObject visualPrefab;
-    
-    public int rotation;
-    
-    public bool CanConnectTo(Tile other, EDirection dir)
+    // ---------------------------------------------------------------------------------------------------------------
+    // Helpers for enemies
+    public bool HasPath(int directionIndex)
     {
-        return GetConnection(dir) && other.GetConnection(GetOpposite(dir));
+        if (directionIndex < 0 || directionIndex > 3) return false;
+        return paths[directionIndex];
     }
     
-    public bool GetConnection(EDirection dir)
+    public Vector3 GetWorldPosition(float cellSize)
     {
-        return dir switch
-        {
-            EDirection.North => connections.north,
-            EDirection.East => connections.east,
-            EDirection.South => connections.south,
-            EDirection.West => connections.west,
-            _ => false
-        };
-    }
-    
-    private EDirection GetOpposite(EDirection dir)
-    {
-        return dir switch
-        {
-            EDirection.North => EDirection.South,
-            EDirection.South => EDirection.North,
-            EDirection.East  => EDirection.West,
-            EDirection.West  => EDirection.East,
-            _ => dir
-        };
+        return new Vector3(x * cellSize, y * cellSize, 0);
     }
 }
