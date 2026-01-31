@@ -15,8 +15,8 @@ public class Enemy : MonoBehaviour
     private Animator animator;
     private Vector2 movement;
     private float lastAttackTime;
-    
     private Vector2 startPosition;
+    private Vector2 finalPosition;
     private int currentCorner = 0;
     private Vector2[] corners;
     private Vector2 targetPosition;
@@ -33,22 +33,20 @@ public class Enemy : MonoBehaviour
             return;
         }
         
-        // Assicurati che sia configurato correttamente
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.gravityScale = 0f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         
         startPosition = transform.position;
+        finalPosition = startPosition + new Vector2(squareSize, 0);
         
-        corners = new Vector2[4]
+        corners = new Vector2[2]
         {
-            startPosition + new Vector2(squareSize, 0),
-            startPosition + new Vector2(squareSize, squareSize),
-            startPosition + new Vector2(0, squareSize),
+            finalPosition,
             startPosition
         };
         
-        targetPosition = corners[0];
+        targetPosition = finalPosition;
         
         Debug.Log($"Enemy inizializzato. Start: {startPosition}, Target: {targetPosition}");
     }
@@ -63,7 +61,6 @@ public class Enemy : MonoBehaviour
         
         float distanceToTarget = Vector2.Distance(currentPos, targetPosition);
         
-        // Debug ogni 60 frame (circa 1 secondo)
         if (Time.frameCount % 60 == 0)
         {
             Debug.Log($"Pos: {currentPos}, Target: {targetPosition}, Distance: {distanceToTarget:F2}, Movement: {movement}");
@@ -73,7 +70,7 @@ public class Enemy : MonoBehaviour
         {
             currentCorner = (currentCorner + 1) % corners.Length;
             targetPosition = corners[currentCorner];
-            Debug.Log($"Raggiunto angolo! Nuovo target: {targetPosition}");
+            Debug.Log($"Raggiunto obiettivo! Nuovo target: {targetPosition}");
         }
         
         UpdateAnimator();
@@ -102,7 +99,7 @@ public class Enemy : MonoBehaviour
         {
             if (Time.time >= lastAttackTime + attackCooldown)
             {
-                // TakeDamage logic
+                
             }
         }
     }
@@ -124,7 +121,6 @@ public class Enemy : MonoBehaviour
         }
         else if (Application.isPlaying)
         {
-            // Mostra posizione corrente durante il play
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, 0.5f);
         }
