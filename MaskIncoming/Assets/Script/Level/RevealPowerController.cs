@@ -17,7 +17,7 @@ namespace Script.Level
             Shader.SetGlobalVector("_RevealCenterWS", pos);
         }
 
-        private void HandleOnMaskActivation()
+        public void HandleOnMaskActivation()
         {
             bActive = true;
             Shader.SetGlobalFloat("_RevealEnabled", 1f);
@@ -25,7 +25,7 @@ namespace Script.Level
             Shader.SetGlobalFloat("_RevealSoftness", softness);
         }
 
-        private void HandleOnMaskDeactivation()
+        public void HandleOnMaskDeactivation()
         {
             bActive = false;
             Shader.SetGlobalFloat("_RevealEnabled", 0f);

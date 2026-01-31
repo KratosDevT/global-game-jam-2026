@@ -51,6 +51,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameEvent OnMaskDeactivation;
 
     private int m_CurrentHealth;
+    private float targetLayerWeight = 0f;
 
     void Awake()
     {
@@ -108,6 +109,11 @@ public class Player : MonoBehaviour
         currentStamina = Mathf.Clamp(currentStamina, 0, maxStamina);
 
         if (staminaSlider != null) staminaSlider.value = currentStamina;
+
+        float currentW = m_Animator.GetLayerWeight(m_SpecialLayerIndex);
+
+        float newW = Mathf.MoveTowards(currentW, targetLayerWeight, Time.deltaTime * 5f);
+        m_Animator.SetLayerWeight(m_SpecialLayerIndex, newW);
 
         UpdateStaminaUI();
     }
@@ -182,26 +188,8 @@ public class Player : MonoBehaviour
                     OnMaskDeactivation.Raise();
             }
 
-            if (weightCoroutine != null) StopCoroutine(weightCoroutine);
-            float target = b_IsMaskOn ? 1f : 0f;
-            weightCoroutine = StartCoroutine(AnimateLayerWeight(target, 1.0f));
+            targetLayerWeight = b_IsMaskOn ? 1f : 0f;
         }
-    }
-
-    private IEnumerator AnimateLayerWeight(float targetWeight, float duration)
-    {
-        float startWeight = m_Animator.GetLayerWeight(m_SpecialLayerIndex);
-        float time = 0;
-
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            float newWeight = Mathf.Lerp(startWeight, targetWeight, time / duration);
-            m_Animator.SetLayerWeight(m_SpecialLayerIndex, newWeight);
-            yield return null;
-        }
-
-        m_Animator.SetLayerWeight(m_SpecialLayerIndex, targetWeight);
     }
 
     void ActivatePower()
