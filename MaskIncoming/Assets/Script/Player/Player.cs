@@ -7,16 +7,14 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     
-    private Rigidbody2D rb;
-    private Vector2 moveInput;
-    private Animator animator;
-    private PlayerControls controls;
+    private Rigidbody2D m_Rb;
+    private Vector2 m_MoveInput;
+    private Animator m_Animator;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        controls = new PlayerControls();
+        m_Rb = GetComponent<Rigidbody2D>();
+        m_Animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -24,54 +22,37 @@ public class Player : MonoBehaviour
         
     }
 
-    void OnEnable() => controls.Player.Enable();
-    void OnDisable() => controls.Player.Disable();
+    void Update()
+    {
+
+    }
 
     void FixedUpdate()
     {
-        rb.linearVelocity = moveInput * moveSpeed;
+        m_Rb.linearVelocity = m_MoveInput * moveSpeed;
     }
 
-    void Update()
+    public void OnMove(InputValue value)
     {
-        moveInput = controls.Player.Move.ReadValue<Vector2>();
+        m_MoveInput = value.Get<Vector2>();
 
-        if (moveInput != Vector2.zero)
+        if (m_MoveInput != Vector2.zero)
         {
-            animator.SetFloat("MoveX", moveInput.x);
-            animator.SetFloat("MoveY", moveInput.y);
-                    Debug.Log("Potere Speciale!");
+            m_Animator.SetFloat("MoveX", m_MoveInput.x);
+            m_Animator.SetFloat("MoveY", m_MoveInput.y);
         }
-        animator.SetFloat("Speed", moveInput.sqrMagnitude);
 
-        if (controls.Player.MaskPower.triggered)
-        {
-            ActivatePower();
-        }
+        m_Animator.SetFloat("Speed", m_MoveInput.sqrMagnitude);
     }
 
-    // public void OnMove(InputValue value)
-    // {
-    //     moveInput = value.Get<Vector2>();
-
-    //     if (moveInput != Vector2.zero)
-    //     {
-    //         animator.SetFloat("MoveX", moveInput.x);
-    //         animator.SetFloat("MoveY", moveInput.y);
-    //         Debug.Log("Move!");
-    //     }
-
-    //     animator.SetFloat("Speed", moveInput.sqrMagnitude);
-    // }
-
-    // public void OnMaskPower(InputValue value)
-    // {
-    //     if (value.isPressed)
-    //     {
-    //         animator.SetTrigger("SpecialPower");
-    //         Debug.Log("Potere Speciale!");
-    //     }
-    // }
+    public void OnMaskPower(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            m_Animator.SetTrigger("SpecialPower");
+            Debug.Log("Potere Speciale!");
+        }
+    }
 
     void ActivatePower()
     {
