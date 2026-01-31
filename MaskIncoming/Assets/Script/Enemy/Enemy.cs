@@ -23,16 +23,19 @@ public class Enemy : MonoBehaviour
     private IMaze maze;
 
     private Vector2 startPosition;
-    private Vector2 finalPosition;
+    private Vector2 currentPosition;
     private Vector2 targetPosition;
+
     private const float arrivalThreshold = 0.1f;
-    private bool choosingPath;
 
     private enum EnemyState { Patrol, Chase, Idle }
 
     private enum Direction { Nord, Est, Sud, Ovest }
 
     private EnemyState currentState;
+
+    float distanceToPlayer = 0.0f;
+    float distanceToTarget = 0.0f;
 
     void Start()
     {
@@ -57,6 +60,7 @@ public class Enemy : MonoBehaviour
         }
 
         startPosition = transform.position;
+        targetPosition = startPosition;
         currentState = EnemyState.Idle;
         Debug.Log($"Enemy " + gameObject.name + " inizializzato. Start: {startPosition}");
     }
@@ -65,61 +69,57 @@ public class Enemy : MonoBehaviour
     {
         if (maze == null)
         {
-            Debug.Log($"Maze not initialized!");
+            Debug.Error($"Maze not setted into enemy!!");
             return;
         }
-        Vector2 currentEnemyPosition = transform.position;
+
+        if (player == null)
+        {
+            Debug.LogError("Player non trovato! Assicurati che abbia il tag 'Player'");
+            return;
+        }
+
+        currentPosition = transform.position;
+        distanceToPlayer = Vector2.Distance(currentPosition, player.transform.position);
+        distanceToTarget = Vector2.Distance(currentPosition, targetPosition);
+
         switch (currentState)
         {
             case EnemyState.Patrol:
-                PatrolBehavior(currentEnemyPosition);
-                moveSpeed = patrolSpeed;
+                PatrolBehavior(currentPosition);
                 break;
 
             case EnemyState.Idle:
-                IdleBehaviour(currentEnemyPosition);
+                IdleBehaviour(currentPosition);
                 break;
 
             case EnemyState.Chase:
-                ChaseBehavior(currentEnemyPosition);
-                moveSpeed = chaseSpeed;
+                ChaseBehavior(currentPosition);
                 break;
 
             default:
                 break;
         }
-        //         if (!choosingPath)
-        // {
-
-        //     // if (distanceToPlayer <= chaseRadius)
-        //     // {
-        //     //     currentState = EnemyState.Chase;
-        //     // }
-        //     // else
-        //     // {
-
-        //     // }
-        //     currentState = EnemyState.Patrol;
-        // }
-        //         Vector2 currentPos = transform.position;
-        // float distanceToPlayer = Vector2.Distance(currentPos, player.transform.position);
-
-
         UpdateAnimator();
     }
 
     void PatrolBehavior(Vector2 currentPos)
     {
+        moveSpeed = patrolSpeed;
         Vector2 direction = (targetPosition - currentPos).normalized;
         movement = direction;
 
-        float distanceToTarget = Vector2.Distance(currentPos, targetPosition);
+        if (distanceToPlayer <= chaseRadius)
+        {
+            //currentState = EnemyState.Chase;
+            // calculateTile to Player
+            return;
+        }
 
         if (distanceToTarget < arrivalThreshold)
         {
             currentTile = targetTile;
             currentState = EnemyState.Idle;
-            choosingPath = true;
         }
     }
 
@@ -131,11 +131,11 @@ public class Enemy : MonoBehaviour
         CalculateTargetTile();
 
         currentState = EnemyState.Patrol;
-        choosingPath = false;
     }
 
     void ChaseBehavior(Vector2 currentPos)
     {
+        moveSpeed = chaseSpeed;
         //casistica che va verso il player
 
         // // Insegue il player
@@ -154,7 +154,11 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (rb == null) return;
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody2D non trovato in FixedUpdate su " + gameObject.name);
+            return;
+        }
 
         Vector2 newPosition = rb.position + movement * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(newPosition);
@@ -162,30 +166,20 @@ public class Enemy : MonoBehaviour
 
     void CalculateTargetTile()
     {
+        List<Direction> availableDirections = new List<Direction>();
+
         if (currentTile.HasPath((int)Direction.Nord))
-        {
-            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Nord);
-            targetTile = _tile;
-            targetPosition = maze.TileToWorld(targetTile);
-        }
-        else if (currentTile.HasPath((int)Direction.Sud))
-        {
-            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Sud);
-            targetTile = _tile;
-            targetPosition = maze.TileToWorld(targetTile);
-        }
-        else if (currentTile.HasPath((int)Direction.Est))
-        {
-            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Est);
-            targetTile = _tile;
-            targetPosition = maze.TileToWorld(targetTile);
-        }
-        else if (currentTile.HasPath((int)Direction.Ovest))
-        {
-            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Ovest);
-            targetTile = _tile;
-            targetPosition = maze.TileToWorld(targetTile);
-        }
+            availableDirections.Add(Direction.Nord);
+        if (currentTile.HasPath((int)Direction.Sud))
+            availableDirections.Add(Direction.Sud);
+        if (currentTile.HasPath((int)Direction.Est))
+            availableDirections.Add(Direction.Est);
+        if (currentTile.HasPath((int)Direction.Ovest))
+            availableDirections.Add(Direction.Ovest);
+
+        Direction randomDirection = availableDirections[Random.Range(0, availableDirections.Count)];
+        targetTile = maze.GetNeighbor(currentTile, (int)randomDirection);
+        targetPosition = maze.TileToWorld(targetTile);
     }
 
     void OnCollisionStay2D(Collision2D collision)
