@@ -2,13 +2,62 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {    
+
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 2.0f;
+    [SerializeField] private float detectionRange = 5.0f;
+    
+    [Header("Combat")]
+    [SerializeField] private int damage = 10;
+    [SerializeField] private float attackCooldown = 2.0f;
+    
+    private Transform player;
+    private Rigidbody2D rb;
+    private Vector2 movement;
+    private float lastAttackTime;
+
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
     {
-        
+        if(player)
+        {
+            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+            
+            if (distanceToPlayer <= detectionRange)
+            {
+                Vector2 direction = (player.position - transform.position).normalized;
+                movement = direction;
+            }
+            else
+            {
+                movement = Vector2.zero;
+            }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                //PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+                // if (playerHealth != null)
+                // {
+                //     playerHealth.TakeDamage(damage);
+                //     lastAttackTime = Time.time;
+                // }
+            }
+        }
     }
 }
