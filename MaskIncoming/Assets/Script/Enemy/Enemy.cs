@@ -1,15 +1,16 @@
 using System.Collections;
 using Script.Enums;
+using Script.Level;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
-{    
+{
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2.0f;
     [SerializeField] private float patrolSpeed = 2.0f;
     [SerializeField] private float chaseSpeed = 3.0f;
     [SerializeField] private float chaseRadius = 3.0f;
-    
+
     //[Header("Combat")]
     // [SerializeField] private int damage = 10;
     // [SerializeField] private float attackCooldown = 2.0f;
@@ -24,11 +25,13 @@ public class Enemy : MonoBehaviour
     private Tile currentTile;
     private Tile targetTile;
 
+    private IMaze maze;
+
     private Vector2 startPosition;
     private Vector2 finalPosition;
     private Vector2 targetPosition;
     private const float arrivalThreshold = 0.1f;
-    
+
     private enum EnemyState { Patrol, Chase, Idle }
 
     private enum Direction { Nord, Est, Sud, Ovest }
@@ -49,14 +52,14 @@ public class Enemy : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.gravityScale = 0f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        
+
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
             Debug.LogError("Player non trovato! Assicurati che abbia il tag 'Player'");
             return;
         }
-        
+
         startPosition = transform.position;
         IdleBehaviour(startPosition);
         Debug.Log($"Enemy " + gameObject.name + " inizializzato. Start: {startPosition}");
@@ -66,7 +69,7 @@ public class Enemy : MonoBehaviour
     {
         Vector2 currentPos = transform.position;
         float distanceToPlayer = Vector2.Distance(currentPos, player.transform.position);
-        
+
         if (distanceToPlayer <= chaseRadius)
         {
             currentState = EnemyState.Chase;
@@ -75,29 +78,29 @@ public class Enemy : MonoBehaviour
         {
             currentState = EnemyState.Patrol;
         }
-    
+
         switch (currentState)
         {
             case EnemyState.Patrol:
                 PatrolBehavior(currentPos);
                 moveSpeed = patrolSpeed;
                 break;
-                
+
             case EnemyState.Idle:
                 IdleBehaviour(currentPos);
                 moveSpeed = 0.0f;
-                movement = Vector2.zero;
+
                 break;
-                
+
             case EnemyState.Chase:
                 ChaseBehavior(currentPos);
                 moveSpeed = chaseSpeed;
                 break;
-            
+
             default:
                 break;
         }
-        
+
         UpdateAnimator();
     }
 
@@ -107,7 +110,7 @@ public class Enemy : MonoBehaviour
         movement = direction;
 
         float distanceToTarget = Vector2.Distance(currentPos, targetPosition);
-        
+
         if (distanceToTarget < arrivalThreshold)
         {
             currentTile = targetTile;
@@ -117,11 +120,10 @@ public class Enemy : MonoBehaviour
 
     void IdleBehaviour(Vector2 currentPos)
     {
-        Tile nextTile = new Tile(1,1);
-        currentTile.HasPath((int) Direction.Nord);
-        targetTile = nextTile;
+        movement = Vector2.zero;
 
-        targetPosition = Vector3.zero;
+        CalculateTargetTile();
+
         currentState = EnemyState.Patrol;
     }
 
@@ -137,7 +139,7 @@ public class Enemy : MonoBehaviour
     void UpdateAnimator()
     {
         if (animator == null) return;
-        
+
         animator.SetFloat("Speed", movement.magnitude);
         animator.SetFloat("MoveX", movement.x);
         animator.SetFloat("MoveY", movement.y);
@@ -146,9 +148,19 @@ public class Enemy : MonoBehaviour
     void FixedUpdate()
     {
         if (rb == null) return;
-        
+
         Vector2 newPosition = rb.position + movement * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(newPosition);
+    }
+
+    void CalculateTargetTile()
+    {
+        if (currentTile.HasPath((int) Direction.Nord))
+        {
+            Tile _tile = maze.GetNeighbor(currentTile, (int) Direction.Nord);
+            targetTile = _tile;
+            targetPosition = maze.TileToWorld(targetTile);
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)
@@ -159,9 +171,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void SetSpawningTile(Tile tile)
+    public void InitializeMazeData(IMaze _maze)
     {
-        initialTile = tile;
-        currentTile = tile;
+        initialTile = _maze.GetTile((int) transform.position.x, (int) transform.position.y);
+        currentTile = initialTile;
+        maze = _maze;
     }
 }
