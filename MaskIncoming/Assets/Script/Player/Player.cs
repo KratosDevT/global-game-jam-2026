@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -27,6 +28,12 @@ public class Player : MonoBehaviour
     [SerializeField] private float minAlpha = 0.3f;
     private Vector3 sliderOriginalPos;
 
+    [Header("UI Health")]
+    [SerializeField] private Image[] heartIcons;
+    [SerializeField] private Sprite fullHeartSprite;
+    [SerializeField] private Sprite emptyHeartSprite;
+    [SerializeField] private Color deadHeartColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+
     // SpecialPower
     private Coroutine weightCoroutine;
     private float currentStamina;
@@ -43,7 +50,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameEvent OnMaskActivation;
     [SerializeField] private GameEvent OnMaskDeactivation;
 
-    private int m_Lives = 3;
+    private int m_CurrentHealth;
 
     void Awake()
     {
@@ -66,6 +73,9 @@ public class Player : MonoBehaviour
         {
             staminaFillImage.color = staminaGradient.Evaluate(1f);
         }
+
+        m_CurrentHealth = heartIcons.Length;
+        UpdateHealthUI();
     }
 
     void Update()
@@ -77,9 +87,14 @@ public class Player : MonoBehaviour
             
             if (currentStamina <= 0)
             {
+                // todo: no more mask animation
                 currentStamina = 0;
-                TakeDamage();
                 DeactivatePower();
+
+                if (weightCoroutine != null) StopCoroutine(weightCoroutine);
+                m_Animator.SetLayerWeight(m_SpecialLayerIndex, 0f);
+
+                TakeDamage();
             }
         }
         else
@@ -156,10 +171,7 @@ public class Player : MonoBehaviour
         {
             if(!b_IsMaskOn && currentStamina > 20f)
             {
-                b_IsMaskOn = true;
                 ActivatePower();
-                if(OnMaskActivation)
-                    OnMaskActivation.Raise();
             }
             else if(b_IsMaskOn)
             {
@@ -194,25 +206,65 @@ public class Player : MonoBehaviour
 
     void ActivatePower()
     {
-        
+        b_IsMaskOn = true;
+        if(OnMaskActivation)
+            OnMaskActivation.Raise();
     }
 
     void DeactivatePower()
     {
-        
+        b_IsMaskOn = false;
+        lastTimeMaskDeactivated = Time.time;
+        if(OnMaskDeactivation)
+            OnMaskDeactivation.Raise();
     }
 
     // Lifes
 
     public void TakeDamage()
     {
-        if(m_Lives != 1)
+        GetComponent<SpriteRenderer>().color = Color.red;
+        Invoke("ResetColor", 0.1f); 
+
+        if (m_CurrentHealth > 0)
         {
-            m_Lives -= 1;
+            m_CurrentHealth -= 1;
+            UpdateHealthUI();
         }
-        else
+        if (m_CurrentHealth <= 0)
         {
-            // todo: death event
+            if(b_IsMaskOn) 
+            {
+                // todo: Special death
+                Debug.Log("Morte speciale con maschera!");
+            } 
+            else 
+            {
+                // todo: normal death
+                Debug.Log("Morte normale!");
+            }
+        }
+    }
+
+    void ResetColor() { GetComponent<SpriteRenderer>().color = Color.white; }
+
+    private void UpdateHealthUI()
+    {
+        Color horrorRed;
+        ColorUtility.TryParseHtmlString("#5a0000", out horrorRed);
+        
+        for (int i = 0; i < heartIcons.Length; i++)
+        {
+            if (i < m_CurrentHealth)
+            {
+                heartIcons[i].sprite = fullHeartSprite;
+                heartIcons[i].color = horrorRed;
+            }
+            else
+            {
+                heartIcons[i].sprite = emptyHeartSprite;
+                heartIcons[i].color = deadHeartColor;
+            }
         }
     }
 }
