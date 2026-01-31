@@ -11,7 +11,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private int damage = 10;
     [SerializeField] private float attackCooldown = 2.0f;
     
-    private Transform player;
+    // private GameObject player;
+    // private Transform playerTransform;
     private Rigidbody2D rb;
     private Vector2 movement;
     private float lastAttackTime;
@@ -19,30 +20,34 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        // player = GameObject.FindGameObjectWithTag("Player");
+        // if (player)
+        // {
+        //     playerTransform = player.Transform;
+        // }
     }
 
     void Update()
     {
-        if(player)
-        {
-            float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        // if(playerTransform)
+        // {
+        //     float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
             
-            if (distanceToPlayer <= detectionRange)
-            {
-                Vector2 direction = (player.position - transform.position).normalized;
-                movement = direction;
-            }
-            else
-            {
-                movement = Vector2.zero;
-            }
-        }
+        //     if (distanceToPlayer <= detectionRange)
+        //     {
+        //         Vector2 direction = (playerTransform.position - transform.position).normalized;
+        //         movement = direction;
+        //     }
+        //     else
+        //     {
+        //         movement = Vector2.zero;
+        //     }
+        // }
     }
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        // rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 
     void OnCollisionStay2D(Collision2D collision)
