@@ -3,6 +3,7 @@ using Script.Enums;
 using Script.Level;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Enemy : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class Enemy : MonoBehaviour
     private GameObject player;
     private Vector2 movement;
 
-    private Tile initialTile;
+    private Tile previousTile = null;
     private Tile currentTile;
     private Tile targetTile;
 
@@ -119,6 +120,7 @@ public class Enemy : MonoBehaviour
 
         if (distanceToTarget < arrivalThreshold)
         {
+            previousTile = currentTile;
             currentTile = targetTile;
             currentState = EnemyState.Idle;
         }
@@ -167,20 +169,19 @@ public class Enemy : MonoBehaviour
 
     void CalculateTargetTile()
     {
-        List<Direction> availableDirections = new List<Direction>();
+        List<Tile> list = maze.GetNeighborsMinusPrevious(currentTile, previousTile).ToList();
 
-        if (currentTile.HasPath((int)Direction.Nord))
-            availableDirections.Add(Direction.Nord);
-        if (currentTile.HasPath((int)Direction.Sud))
-            availableDirections.Add(Direction.Sud);
-        if (currentTile.HasPath((int)Direction.Est))
-            availableDirections.Add(Direction.Est);
-        if (currentTile.HasPath((int)Direction.Ovest))
-            availableDirections.Add(Direction.Ovest);
-
-        Direction randomDirection = availableDirections[Random.Range(0, availableDirections.Count)];
-        targetTile = maze.GetNeighbor(currentTile, (int)randomDirection);
-        targetPosition = maze.TileToWorld(targetTile);
+        if (list.Count > 0)
+        {
+            targetTile = list[Random.Range(0, list.Count)];
+            targetPosition = maze.TileToWorld(targetTile);
+        }
+        else
+        {
+            targetTile = currentTile;
+            targetPosition = currentPosition;
+            Debug.LogError("La lista per il prossimo Tile è vuota per l'enemy: " + gameObject.name);
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)
@@ -193,8 +194,7 @@ public class Enemy : MonoBehaviour
 
     public void InitializeMazeData(IMaze _maze)
     {
-        initialTile = _maze.GetTile((int)transform.position.x, (int)transform.position.y);
-        currentTile = initialTile;
+        currentTile = _maze.GetTile((int)transform.position.x, (int)transform.position.y);
         maze = _maze;
     }
 }
