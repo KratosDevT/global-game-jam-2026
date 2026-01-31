@@ -24,8 +24,8 @@ namespace Script.Level
         [Header("Fake Pool")]
         [SerializeField] private List<Sprite> availableFakeSprites;
         
-        private Tile[,] grid;
-
+        private Maze _maze;
+        
         private void Start()
         {
             GenerateMaze();
@@ -35,41 +35,13 @@ namespace Script.Level
         {
             foreach (Transform child in transform) Destroy(child.gameObject);
         }
-
-        /*
-        private void RunRecursiveBacktracker()
-        {
-            Stack<Tile> stack = new Stack<Tile>();
-            Tile current = grid[0, 0];
-            current.visited = true;
-            stack.Push(current);
-
-            while (stack.Count > 0)
-            {
-                current = stack.Pop();
-                List<Tile> neighbors = GetUnvisitedNeighbors(current);
-
-                if (neighbors.Count > 0)
-                {
-                    stack.Push(current);
-                    Tile next = neighbors[Random.Range(0, neighbors.Count)];
-                    RemoveWall(current, next);
-                    next.visited = true;
-                    stack.Push(next);
-                }
-            }
-        }*/
         
         private void GenerateMaze()
         {
             // Clean up (rimuove istanze precedenti)
             Cleanup();
 
-            // Create Grid
-            grid = new Tile[width, height];
-            for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-                grid[x, y] = new Tile(x, y);
+            _maze = new Maze(width, height, cellSize);
 
             // Algorithm to populate maze
             RunRecursiveBacktracker();
@@ -85,8 +57,8 @@ namespace Script.Level
         private void RunRecursiveBacktracker()
         {
             Stack<Tile> stack = new Stack<Tile>();
-            Tile start = grid[0, 0];
-            start.visited = true;
+            Tile start = _maze.GetTile(0, 0);
+            start.Visited = true;
             stack.Push(start);
 
             // Variante con Peek(): più leggibile e classica
@@ -99,7 +71,7 @@ namespace Script.Level
                 {
                     Tile next = neighbors[Random.Range(0, neighbors.Count)];
                     RemoveWall(current, next);
-                    next.visited = true;
+                    next.Visited = true;
                     stack.Push(next);
                 }
                 else
@@ -117,7 +89,7 @@ namespace Script.Level
         {
             bool[,] seen = new bool[width, height];
             Queue<Tile> q = new Queue<Tile>();
-            q.Enqueue(grid[0, 0]);
+            q.Enqueue(_maze.GetTile(0, 0));
             seen[0, 0] = true;
             int reachable = 0;
 
@@ -127,17 +99,17 @@ namespace Script.Level
                 reachable++;
 
                 // Nord
-                if (t.paths[0] && IsValid(t.x, t.y + 1) && !seen[t.x, t.y + 1])
-                { seen[t.x, t.y + 1] = true; q.Enqueue(grid[t.x, t.y + 1]); }
+                if (t.Paths[0] && IsValid(t.X, t.Y + 1) && !seen[t.X, t.Y + 1])
+                { seen[t.X, t.Y + 1] = true; q.Enqueue(_maze.GetTile(t.X, t.Y + 1)); }
                 // Est
-                if (t.paths[1] && IsValid(t.x + 1, t.y) && !seen[t.x + 1, t.y])
-                { seen[t.x + 1, t.y] = true; q.Enqueue(grid[t.x + 1, t.y]); }
+                if (t.Paths[1] && IsValid(t.X + 1, t.Y) && !seen[t.X + 1, t.Y])
+                { seen[t.X + 1, t.Y] = true; q.Enqueue(_maze.GetTile(t.X + 1, t.Y)); }
                 // Sud
-                if (t.paths[2] && IsValid(t.x, t.y - 1) && !seen[t.x, t.y - 1])
-                { seen[t.x, t.y - 1] = true; q.Enqueue(grid[t.x, t.y - 1]); }
+                if (t.Paths[2] && IsValid(t.X, t.Y - 1) && !seen[t.X, t.Y - 1])
+                { seen[t.X, t.Y - 1] = true; q.Enqueue(_maze.GetTile(t.X, t.Y - 1)); }
                 // Ovest
-                if (t.paths[3] && IsValid(t.x - 1, t.y) && !seen[t.x - 1, t.y])
-                { seen[t.x - 1, t.y] = true; q.Enqueue(grid[t.x - 1, t.y]); }
+                if (t.Paths[3] && IsValid(t.X - 1, t.Y) && !seen[t.X - 1, t.Y])
+                { seen[t.X - 1, t.Y] = true; q.Enqueue(_maze.GetTile(t.X - 1, t.Y)); }
             }
 
             int total = width * height;
@@ -155,34 +127,25 @@ namespace Script.Level
         }
         private void RemoveWall(Tile a, Tile b)
         {
-            if (a.x == b.x) // Verticale
+            if (a.X == b.X) // Verticale
             {
-                if (a.y > b.y) { a.paths[2] = true; b.paths[0] = true; } // a Sud di b
-                else           { a.paths[0] = true; b.paths[2] = true; } // a Nord di b
+                if (a.Y > b.Y) { a.Paths[2] = true; b.Paths[0] = true; } // a Sud di b
+                else           { a.Paths[0] = true; b.Paths[2] = true; } // a Nord di b
             }
             else // Orizzontale
             {
-                if (a.x > b.x) { a.paths[3] = true; b.paths[1] = true; } // a Ovest di b
-                else           { a.paths[1] = true; b.paths[3] = true; } // a Est di b
+                if (a.X > b.X) { a.Paths[3] = true; b.Paths[1] = true; } // a Ovest di b
+                else           { a.Paths[1] = true; b.Paths[3] = true; } // a Est di b
             }
         }
 
         private List<Tile> GetUnvisitedNeighbors(Tile cell)
         {
-            /*
             List<Tile> neighbors = new List<Tile>();
-            if (cell.y + 1 < height && !grid[cell.x, cell.y + 1].visited) neighbors.Add(grid[cell.x, cell.y + 1]); // N
-            if (cell.x + 1 < width && !grid[cell.x + 1, cell.y].visited) neighbors.Add(grid[cell.x + 1, cell.y]); // E
-            if (cell.y - 1 >= 0 && !grid[cell.x, cell.y - 1].visited) neighbors.Add(grid[cell.x, cell.y - 1]); // S
-            if (cell.x - 1 >= 0 && !grid[cell.x - 1, cell.y].visited) neighbors.Add(grid[cell.x - 1, cell.y]); // O
-            return neighbors;
-            */
-            
-            List<Tile> neighbors = new List<Tile>();
-            if (IsValid(cell.x, cell.y + 1) && !grid[cell.x, cell.y + 1].visited) neighbors.Add(grid[cell.x, cell.y + 1]);
-            if (IsValid(cell.x + 1, cell.y) && !grid[cell.x + 1, cell.y].visited) neighbors.Add(grid[cell.x + 1, cell.y]);
-            if (IsValid(cell.x, cell.y - 1) && !grid[cell.x, cell.y - 1].visited) neighbors.Add(grid[cell.x, cell.y - 1]);
-            if (IsValid(cell.x - 1, cell.y) && !grid[cell.x - 1, cell.y].visited) neighbors.Add(grid[cell.x - 1, cell.y]);
+            if (IsValid(cell.X, cell.Y + 1) && !_maze.GetTile(cell.X, cell.Y + 1).Visited) neighbors.Add(_maze.GetTile(cell.X, cell.Y + 1));
+            if (IsValid(cell.X + 1, cell.Y) && !_maze.GetTile(cell.X + 1, cell.Y).Visited) neighbors.Add(_maze.GetTile(cell.X + 1, cell.Y));
+            if (IsValid(cell.X, cell.Y - 1) && !_maze.GetTile(cell.X, cell.Y - 1).Visited) neighbors.Add(_maze.GetTile(cell.X, cell.Y - 1));
+            if (IsValid(cell.X - 1, cell.Y) && !_maze.GetTile(cell.X - 1, cell.Y).Visited) neighbors.Add(_maze.GetTile(cell.X - 1, cell.Y));
             return neighbors;
         }
 
@@ -192,7 +155,7 @@ namespace Script.Level
             {
                 for (int y = 0; y < height; y++)
                 {
-                    Tile cell = grid[x, y];
+                    Tile cell = _maze.GetTile(x, y);
                     int connectionCount = GetConnectionCount(cell);
 
                     // Se è un vicolo cieco (1 sola connessione) e il caso vuole...
@@ -218,13 +181,13 @@ namespace Script.Level
             List<Tile> closed = new List<Tile>();
             // Controlliamo i vicini validi che NON sono connessi a 'cell'
             // Nord
-            if (IsValid(cell.x, cell.y + 1) && !cell.paths[0]) closed.Add(grid[cell.x, cell.y + 1]);
+            if (IsValid(cell.X, cell.Y + 1) && !cell.Paths[0]) closed.Add(_maze.GetTile(cell.X, cell.Y + 1));
             // Est
-            if (IsValid(cell.x + 1, cell.y) && !cell.paths[1]) closed.Add(grid[cell.x + 1, cell.y]);
+            if (IsValid(cell.X + 1, cell.Y) && !cell.Paths[1]) closed.Add(_maze.GetTile(cell.X + 1, cell.Y));
             // Sud
-            if (IsValid(cell.x, cell.y - 1) && !cell.paths[2]) closed.Add(grid[cell.x, cell.y - 1]);
+            if (IsValid(cell.X, cell.Y - 1) && !cell.Paths[2]) closed.Add(_maze.GetTile(cell.X, cell.Y - 1));
             // Ovest
-            if (IsValid(cell.x - 1, cell.y) && !cell.paths[3]) closed.Add(grid[cell.x - 1, cell.y]);
+            if (IsValid(cell.X - 1, cell.Y) && !cell.Paths[3]) closed.Add(_maze.GetTile(cell.X - 1, cell.Y));
         
             return closed;
         }
@@ -232,7 +195,7 @@ namespace Script.Level
         int GetConnectionCount(Tile cell)
         {
             int count = 0;
-            foreach (bool p in cell.paths) if (p) count++;
+            foreach (bool p in cell.Paths) if (p) count++;
             return count;
         }
 
@@ -247,15 +210,15 @@ namespace Script.Level
             {
                 for (int y = 0; y < height; y++)
                 {
-                    Tile cell = grid[x, y];
+                    Tile cell = _maze.GetTile(x, y);
                     Vector3 pos = new Vector3(x * cellSize, y * cellSize, 0);
 
                     // Calcolo Bitmask: N=1, E=2, S=4, O=8
                     int mask = 0;
-                    if (cell.paths[0]) mask += 1;
-                    if (cell.paths[1]) mask += 2;
-                    if (cell.paths[2]) mask += 4;
-                    if (cell.paths[3]) mask += 8;
+                    if (cell.Paths[0]) mask += 1;
+                    if (cell.Paths[1]) mask += 2;
+                    if (cell.Paths[2]) mask += 4;
+                    if (cell.Paths[3]) mask += 8;
 
                     IllusoryTile prefab = null;
                     float rot = 0;

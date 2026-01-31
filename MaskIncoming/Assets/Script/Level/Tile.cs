@@ -1,30 +1,36 @@
 using System.Collections;
+using System.Collections.Generic;
 using Script.Enums;
 using UnityEngine;
 
 public class Tile
 {
-    public int x, y;
-    public bool visited = false;
-    // an array for directions: 0=Nord, 1=Est, 2=Sud, 3=Ovest
-    public bool[] paths = new bool[4]; 
+    public int X, Y;
+    public bool Visited;
+    public bool[] Paths = new bool[4];
+
+    private Dictionary<string, int> _visitCountByEnemy 
+        = new Dictionary<string, int>();
 
     public Tile(int x, int y)
     {
-        this.x = x;
-        this.y = y;
+        this.X = x;
+        this.Y = y;
     }
-    
-    // ---------------------------------------------------------------------------------------------------------------
-    // Helpers for enemies
-    public bool HasPath(int directionIndex)
+
+    public void RegisterVisit(Enemy enemy)
     {
-        if (directionIndex < 0 || directionIndex > 3) return false;
-        return paths[directionIndex];
+        string id = enemy.gameObject.name;
+
+        if (!_visitCountByEnemy.TryAdd(id, 1))
+            _visitCountByEnemy[id]++;
     }
-    
-    public Vector3 GetWorldPosition(float cellSize)
+
+    public int GetVisitCount(Enemy enemy)
     {
-        return new Vector3(x * cellSize, y * cellSize, 0);
+        return _visitCountByEnemy.GetValueOrDefault(enemy.gameObject.name, 0);
     }
+
+    public bool HasPath(int dirIndex)
+        => Paths[dirIndex];
 }
