@@ -3,19 +3,23 @@
   "WorkspaceRootPath": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|c:\\users\\domi2\\desktop\\ggj26\\global-game-jam-2026\\maskincoming\\assets\\script\\level\\collectitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\level\\collectitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|c:\\users\\domi2\\desktop\\ggj26\\global-game-jam-2026\\maskincoming\\assets\\script\\level\\mazegenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\level\\mazegenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|c:\\users\\domi2\\desktop\\ggj26\\global-game-jam-2026\\maskincoming\\assets\\script\\level\\illusorytile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\assets\\script\\level\\illusorytile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\level\\illusorytile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|c:\\users\\domi2\\desktop\\ggj26\\global-game-jam-2026\\maskincoming\\assets\\script\\level\\mazepreset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\assets\\script\\level\\mazepreset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\level\\mazepreset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|c:\\users\\domi2\\desktop\\ggj26\\global-game-jam-2026\\maskincoming\\assets\\script\\level\\tile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\assets\\script\\level\\tile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\level\\tile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -26,11 +30,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "CollectItem.cs",
+              "DocumentMoniker": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\CollectItem.cs",
+              "RelativeDocumentMoniker": "Assets\\Script\\Level\\CollectItem.cs",
+              "ToolTip": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\CollectItem.cs",
+              "RelativeToolTip": "Assets\\Script\\Level\\CollectItem.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-31T18:54:17.289Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "IllusoryTile.cs",
               "DocumentMoniker": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\IllusoryTile.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Level\\IllusoryTile.cs",
@@ -38,25 +55,24 @@
               "RelativeToolTip": "Assets\\Script\\Level\\IllusoryTile.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-31T15:35:23.605Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-31T15:35:23.605Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MazeGenerator.cs",
               "DocumentMoniker": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\MazeGenerator.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Level\\MazeGenerator.cs",
               "ToolTip": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\MazeGenerator.cs",
               "RelativeToolTip": "Assets\\Script\\Level\\MazeGenerator.cs",
-              "ViewState": "AgIAAFQAAAAAAAAAAAAowGMAAABGAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHcAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-31T15:35:34.27Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "MazePreset.cs",
               "DocumentMoniker": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\MazePreset.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Level\\MazePreset.cs",
@@ -64,21 +80,19 @@
               "RelativeToolTip": "Assets\\Script\\Level\\MazePreset.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-31T15:35:36.512Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-31T15:35:36.512Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Tile.cs",
               "DocumentMoniker": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\Tile.cs",
               "RelativeDocumentMoniker": "Assets\\Script\\Level\\Tile.cs",
               "ToolTip": "C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\Assets\\Script\\Level\\Tile.cs",
               "RelativeToolTip": "Assets\\Script\\Level\\Tile.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAAAAAAAAQwAcAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-31T15:35:38.465Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-31T15:35:38.465Z"
             }
           ]
         }

@@ -2,15 +2,24 @@ using UnityEngine;
 
 public class CollectItem : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private GameEvent OnKeyCollected;
+    [SerializeField] private GameEvent OnSalvationToolCollected;
 
-    // Update is called once per frame
-    void Update()
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.CompareTag("Player"))
+        {
+            Debug.Log("Item raccolto!");
+
+            if (OnKeyCollected)
+                OnKeyCollected.Raise();
+
+            if (OnSalvationToolCollected)
+                OnSalvationToolCollected.Raise();
+
+            Destroy(gameObject);
+        }
+
     }
 }
