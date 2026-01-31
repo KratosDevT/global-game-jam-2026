@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -10,13 +11,17 @@ public class Player : MonoBehaviour
     private Rigidbody2D m_Rb;
     private Vector2 m_MoveInput;
     private Animator m_Animator;
+    private Coroutine weightCoroutine;
 
     private int m_Lives = 3;
+    private bool b_IsMaskOn = false;
+    private int m_SpecialLayerIndex;
 
     void Awake()
     {
         m_Rb = GetComponent<Rigidbody2D>();
         m_Animator = GetComponent<Animator>();
+        m_SpecialLayerIndex = m_Animator.GetLayerIndex("Special Layer");
     }
 
     void Start()
@@ -26,8 +31,10 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-
+        
     }
+
+    // Movement
 
     void FixedUpdate()
     {
@@ -47,19 +54,47 @@ public class Player : MonoBehaviour
         m_Animator.SetFloat("Speed", m_MoveInput.sqrMagnitude);
     }
 
+    // MaskPower
+
     public void OnMaskPower(InputValue value)
     {
-        if (value.isPressed)
+        b_IsMaskOn = !b_IsMaskOn;
+        
+        if (weightCoroutine != null) StopCoroutine(weightCoroutine);
+        
+        float target = b_IsMaskOn ? 1f : 0f;
+        weightCoroutine = StartCoroutine(AnimateLayerWeight(target, 0.5f));
+
+        if (b_IsMaskOn) ActivatePower(); else DeactivatePower();
+    }
+
+    private IEnumerator AnimateLayerWeight(float targetWeight, float duration)
+    {
+        float startWeight = m_Animator.GetLayerWeight(m_SpecialLayerIndex);
+        float time = 0;
+
+        while (time < duration)
         {
-            m_Animator.SetTrigger("SpecialPower");
-            Debug.Log("Potere Speciale!");
+            time += Time.deltaTime;
+            float newWeight = Mathf.Lerp(startWeight, targetWeight, time / duration);
+            m_Animator.SetLayerWeight(m_SpecialLayerIndex, newWeight);
+            yield return null;
         }
+
+        m_Animator.SetLayerWeight(m_SpecialLayerIndex, targetWeight);
     }
 
     void ActivatePower()
     {
-        Debug.Log("Mask Power Activate");
+        
     }
+
+    void DeactivatePower()
+    {
+        
+    }
+
+    // Lifes
 
     public void TakeDamage()
     {
