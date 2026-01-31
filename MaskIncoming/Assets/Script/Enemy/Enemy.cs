@@ -11,11 +11,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float chaseSpeed = 3.0f;
     [SerializeField] private float chaseRadius = 3.0f;
 
-    //[Header("Combat")]
-    // [SerializeField] private int damage = 10;
-    // [SerializeField] private float attackCooldown = 2.0f;
-    //[SerializeField] private float attackRange = 0.5f;
-
     private Rigidbody2D rb;
     private Animator animator;
     private GameObject player;
@@ -31,12 +26,13 @@ public class Enemy : MonoBehaviour
     private Vector2 finalPosition;
     private Vector2 targetPosition;
     private const float arrivalThreshold = 0.1f;
+    private bool choosingPath;
 
     private enum EnemyState { Patrol, Chase, Idle }
 
     private enum Direction { Nord, Est, Sud, Ovest }
 
-    private EnemyState currentState = EnemyState.Patrol;
+    private EnemyState currentState;
 
     void Start()
     {
@@ -61,45 +57,53 @@ public class Enemy : MonoBehaviour
         }
 
         startPosition = transform.position;
-        IdleBehaviour(startPosition);
+        currentState = EnemyState.Idle;
         Debug.Log($"Enemy " + gameObject.name + " inizializzato. Start: {startPosition}");
     }
 
     void Update()
     {
-        Vector2 currentPos = transform.position;
-        float distanceToPlayer = Vector2.Distance(currentPos, player.transform.position);
-
-        if (distanceToPlayer <= chaseRadius)
+        if (maze == null)
         {
-            currentState = EnemyState.Chase;
+            Debug.Log($"Maze not initialized!");
+            return;
         }
-        else
-        {
-            currentState = EnemyState.Patrol;
-        }
-
+        Vector2 currentEnemyPosition = transform.position;
         switch (currentState)
         {
             case EnemyState.Patrol:
-                PatrolBehavior(currentPos);
+                PatrolBehavior(currentEnemyPosition);
                 moveSpeed = patrolSpeed;
                 break;
 
             case EnemyState.Idle:
-                IdleBehaviour(currentPos);
-                moveSpeed = 0.0f;
-
+                IdleBehaviour(currentEnemyPosition);
                 break;
 
             case EnemyState.Chase:
-                ChaseBehavior(currentPos);
+                ChaseBehavior(currentEnemyPosition);
                 moveSpeed = chaseSpeed;
                 break;
 
             default:
                 break;
         }
+        //         if (!choosingPath)
+        // {
+
+        //     // if (distanceToPlayer <= chaseRadius)
+        //     // {
+        //     //     currentState = EnemyState.Chase;
+        //     // }
+        //     // else
+        //     // {
+
+        //     // }
+        //     currentState = EnemyState.Patrol;
+        // }
+        //         Vector2 currentPos = transform.position;
+        // float distanceToPlayer = Vector2.Distance(currentPos, player.transform.position);
+
 
         UpdateAnimator();
     }
@@ -115,16 +119,19 @@ public class Enemy : MonoBehaviour
         {
             currentTile = targetTile;
             currentState = EnemyState.Idle;
+            choosingPath = true;
         }
     }
 
     void IdleBehaviour(Vector2 currentPos)
     {
+        moveSpeed = 0.0f;
         movement = Vector2.zero;
 
         CalculateTargetTile();
 
         currentState = EnemyState.Patrol;
+        choosingPath = false;
     }
 
     void ChaseBehavior(Vector2 currentPos)
@@ -155,9 +162,27 @@ public class Enemy : MonoBehaviour
 
     void CalculateTargetTile()
     {
-        if (currentTile.HasPath((int) Direction.Nord))
+        if (currentTile.HasPath((int)Direction.Nord))
         {
-            Tile _tile = maze.GetNeighbor(currentTile, (int) Direction.Nord);
+            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Nord);
+            targetTile = _tile;
+            targetPosition = maze.TileToWorld(targetTile);
+        }
+        else if (currentTile.HasPath((int)Direction.Sud))
+        {
+            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Sud);
+            targetTile = _tile;
+            targetPosition = maze.TileToWorld(targetTile);
+        }
+        else if (currentTile.HasPath((int)Direction.Est))
+        {
+            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Est);
+            targetTile = _tile;
+            targetPosition = maze.TileToWorld(targetTile);
+        }
+        else if (currentTile.HasPath((int)Direction.Ovest))
+        {
+            Tile _tile = maze.GetNeighbor(currentTile, (int)Direction.Ovest);
             targetTile = _tile;
             targetPosition = maze.TileToWorld(targetTile);
         }
@@ -173,7 +198,7 @@ public class Enemy : MonoBehaviour
 
     public void InitializeMazeData(IMaze _maze)
     {
-        initialTile = _maze.GetTile((int) transform.position.x, (int) transform.position.y);
+        initialTile = _maze.GetTile((int)transform.position.x, (int)transform.position.y);
         currentTile = initialTile;
         maze = _maze;
     }
