@@ -58,6 +58,7 @@ public class Enemy : MonoBehaviour
         }
         
         startPosition = transform.position;
+        IdleBehaviour(startPosition);
         Debug.Log($"Enemy " + gameObject.name + " inizializzato. Start: {startPosition}");
     }
 
@@ -82,7 +83,7 @@ public class Enemy : MonoBehaviour
                 moveSpeed = patrolSpeed;
                 break;
                 
-                case EnemyState.Idle:
+            case EnemyState.Idle:
                 IdleBehaviour(currentPos);
                 moveSpeed = 0.0f;
                 movement = Vector2.zero;
@@ -117,7 +118,7 @@ public class Enemy : MonoBehaviour
     void IdleBehaviour(Vector2 currentPos)
     {
         Tile nextTile = new Tile(1,1);
-        currentTile.HasPath(((int)Direction.Nord));
+        currentTile.HasPath((int) Direction.Nord);
         targetTile = nextTile;
 
         targetPosition = Vector3.zero;
