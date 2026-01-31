@@ -6,6 +6,8 @@ public class Tile
 {
     public int x, y;
     public bool visited = false;
+
+    
     // an array for directions: 0=Nord, 1=Est, 2=Sud, 3=Ovest
     public bool[] paths = new bool[4]; 
 
