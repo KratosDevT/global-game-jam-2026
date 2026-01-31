@@ -53,6 +53,15 @@ namespace Script.Level
             return GetTile(nx, ny);
         }
 
+        public IEnumerable<Tile> GetNeighborsMinusPrevious(Tile currentTile, Tile previousTile)
+        {
+            for (int d = 0; d < 4; d++)
+            {
+                Tile n = GetNeighbor(currentTile, d);
+                if (n != null && n != previousTile) yield return n;
+            }
+        }
+
         public IEnumerable<Tile> GetNeighbors(Tile tile)
         {
             for (int d = 0; d < 4; d++)
