@@ -2,6 +2,7 @@ using System.Collections;
 using Script.Enums;
 using Script.Level;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Enemy : MonoBehaviour
 {
@@ -69,7 +70,7 @@ public class Enemy : MonoBehaviour
     {
         if (maze == null)
         {
-            Debug.Error($"Maze not setted into enemy!!");
+            Debug.LogError($"Maze not setted into enemy!!");
             return;
         }
 
