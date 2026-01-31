@@ -10,13 +10,11 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private Animator animator;
-    private PlayerControls controls;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        controls = new PlayerControls();
     }
 
     void Start()
@@ -24,54 +22,37 @@ public class Player : MonoBehaviour
         
     }
 
-    void OnEnable() => controls.Player.Enable();
-    void OnDisable() => controls.Player.Disable();
+    void Update()
+    {
+
+    }
 
     void FixedUpdate()
     {
         rb.linearVelocity = moveInput * moveSpeed;
     }
 
-    void Update()
+    public void OnMove(InputValue value)
     {
-        moveInput = controls.Player.Move.ReadValue<Vector2>();
+        moveInput = value.Get<Vector2>();
 
         if (moveInput != Vector2.zero)
         {
             animator.SetFloat("MoveX", moveInput.x);
             animator.SetFloat("MoveY", moveInput.y);
-                    Debug.Log("Potere Speciale!");
         }
-        animator.SetFloat("Speed", moveInput.sqrMagnitude);
 
-        if (controls.Player.MaskPower.triggered)
-        {
-            ActivatePower();
-        }
+        animator.SetFloat("Speed", moveInput.sqrMagnitude);
     }
 
-    // public void OnMove(InputValue value)
-    // {
-    //     moveInput = value.Get<Vector2>();
-
-    //     if (moveInput != Vector2.zero)
-    //     {
-    //         animator.SetFloat("MoveX", moveInput.x);
-    //         animator.SetFloat("MoveY", moveInput.y);
-    //         Debug.Log("Move!");
-    //     }
-
-    //     animator.SetFloat("Speed", moveInput.sqrMagnitude);
-    // }
-
-    // public void OnMaskPower(InputValue value)
-    // {
-    //     if (value.isPressed)
-    //     {
-    //         animator.SetTrigger("SpecialPower");
-    //         Debug.Log("Potere Speciale!");
-    //     }
-    // }
+    public void OnMaskPower(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            animator.SetTrigger("SpecialPower");
+            Debug.Log("Potere Speciale!");
+        }
+    }
 
     void ActivatePower()
     {
