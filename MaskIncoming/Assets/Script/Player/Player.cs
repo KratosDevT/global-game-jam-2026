@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     private Vector2 m_MoveInput;
     private Animator m_Animator;
 
+    private int m_Lives = 3;
+
     void Awake()
     {
         m_Rb = GetComponent<Rigidbody2D>();
@@ -57,5 +59,17 @@ public class Player : MonoBehaviour
     void ActivatePower()
     {
         Debug.Log("Mask Power Activate");
+    }
+
+    public void TakeDamage()
+    {
+        if(m_Lives != 1)
+        {
+            m_Lives -= 1;
+        }
+        else
+        {
+            // todo: death event
+        }
     }
 }
