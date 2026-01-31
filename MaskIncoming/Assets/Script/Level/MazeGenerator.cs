@@ -24,13 +24,17 @@ namespace Script.Level
         [Header("Fake Pool")]
         [SerializeField] private List<Sprite> availableFakeSprites;
         
+        [SerializeField] private GameObject enemyPrefab;
+        
         private Maze _maze;
+
+        private bool debug = false;
         
         private void Start()
         {
             GenerateMaze();
         }
-
+        
         private void Cleanup()
         {
             foreach (Transform child in transform) Destroy(child.gameObject);
@@ -52,6 +56,14 @@ namespace Script.Level
             ValidateConnectivity();
 
             DrawMap();
+            
+            debug = true;
+
+            Tile origin = _maze.GetTile(0, 0);
+            Vector3 pos = _maze.TileToWorld(origin);
+            GameObject temp = Instantiate(enemyPrefab, pos, Quaternion.identity);
+            Enemy enemy = temp.GetComponent<Enemy>();
+            enemy.InitializeMazeData(_maze);
         }
 
         private void RunRecursiveBacktracker()
@@ -281,6 +293,21 @@ namespace Script.Level
                         instance.name = $"Tile_{x}_{y}";
                         instance.SetDebug(mask);
                     }
+                }
+            }
+        }
+        
+        private void OnDrawGizmos()
+        {
+            if (!debug) return;
+            Gizmos.color = Color.green;
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    Tile t = _maze.GetTile(x, y);
+                    Vector3 pos = _maze.TileToWorld(t);
+                    Gizmos.DrawWireCube(pos, new Vector3(cellSize, cellSize, 0.1f));
                 }
             }
         }
