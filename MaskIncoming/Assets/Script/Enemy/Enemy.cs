@@ -29,15 +29,14 @@ public class Enemy : MonoBehaviour
     private Vector2 targetPosition;
 
     private const float arrivalThreshold = 0.1f;
-
     private enum EnemyState { Patrol, Chase, Idle }
-
-    private enum Direction { Nord, Est, Sud, Ovest }
 
     private EnemyState currentState;
 
     float distanceToPlayer = 0.0f;
     float distanceToTarget = 0.0f;
+
+    [SerializeField] private GameEvent onPlayerDamage;
 
     void Start()
     {
@@ -111,12 +110,12 @@ public class Enemy : MonoBehaviour
         Vector2 direction = (targetPosition - currentPos).normalized;
         movement = direction;
 
-        if (distanceToPlayer <= chaseRadius)
-        {
-            //currentState = EnemyState.Chase;
-            // calculateTile to Player
-            return;
-        }
+        // if (distanceToPlayer <= chaseRadius)
+        // {
+        //     //currentState = EnemyState.Chase;
+        //     // calculateTile to Player
+        //     return;
+        // }
 
         if (distanceToTarget < arrivalThreshold)
         {
@@ -188,7 +187,14 @@ public class Enemy : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            //attack player
+            if (onPlayerDamage)
+            {
+                onPlayerDamage.Raise();
+            }
+            else
+            {
+                Debug.LogError("onPlayerDamage non settato per l'enemy: " + gameObject.name);
+            }
         }
     }
 
