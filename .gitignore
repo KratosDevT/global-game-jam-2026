@@ -59,6 +59,8 @@ ExportedObj/
 # ===================================
 
 .vscode/
+.vs/
+*/.vs/
 # Se vuoi condividere alcune impostazioni VSCode, commenta questa riga
 # e aggiungi solo file specifici sotto
 
