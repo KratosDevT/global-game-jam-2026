@@ -9,6 +9,8 @@ namespace Script.Level
         [SerializeField] private LevelConfig levelConfig;
         private IMaze _maze;
 
+        [SerializeField] private int numberOfEnemiesToSpawn;
+        
         private List<Tile> _occupiedTiles = new();
         private List<Tile> _enemyTiles = new();
         private List<Tile> _keyTiles = new();
@@ -33,6 +35,12 @@ namespace Script.Level
             SpawnKeys();      
             SpawnPlayer();    
             SpawnEnemies();
+        }
+
+        public void SpawnOnlyEnemiesSigh()
+        {
+            Tile playerTile = _maze.GetTileFromWorld(Vector3.zero);
+            SpawnOnlyEnemiesSigh();
         }
 
         #endregion
@@ -114,7 +122,7 @@ namespace Script.Level
 
             Spawn(levelConfig.PlayerPrefab, _playerTile);
         }
-
+        
         private void SpawnEnemies()
         {
             for (int i = 0; i < levelConfig.NumberOfEnemiesToSpawn; i++)

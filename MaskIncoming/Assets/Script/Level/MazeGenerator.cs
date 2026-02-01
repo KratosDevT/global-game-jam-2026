@@ -65,7 +65,7 @@ namespace Script.Level
             if (spawnManager != null)
             {
                 spawnManager.InitializeMaze(_maze);
-                spawnManager.SpawnAll();
+                spawnManager.SpawnOnlyEnemiesSigh();
             }
         }
 
