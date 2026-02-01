@@ -126,7 +126,8 @@ public class Enemy : MonoBehaviour
 
         if (ShouldChase())
         {
-            Tile playerTile = maze.GetTile((int)player.transform.position.x, (int)player.transform.position.y);
+            Vector2Int playerCoords = maze.WorldToTile(player.transform.position);
+            Tile playerTile = maze.GetTile(playerCoords.x, playerCoords.y);
             pathToPlayer = maze.Pathfinding(currentTile, playerTile);
 
             if (pathToPlayer.Count > 0)
@@ -175,7 +176,8 @@ public class Enemy : MonoBehaviour
             currentTile = targetTile;
 
             // Ricalcola il percorso ogni volta che arriva al centro di un tile
-            Tile playerTile = maze.GetTile((int)player.transform.position.x, (int)player.transform.position.y);
+            Vector2Int playerCoords = maze.WorldToTile(player.transform.position);
+            Tile playerTile = maze.GetTile(playerCoords.x, playerCoords.y);
             pathToPlayer = maze.Pathfinding(currentTile, playerTile);
 
             if (pathToPlayer.Count == 0)
@@ -264,7 +266,7 @@ public class Enemy : MonoBehaviour
             if (onPlayerDamage)
             {
                 onPlayerDamage.Raise();
-                Destroy(this);
+                Destroy(this, 0.1f);
             }
             else
             {
@@ -275,7 +277,8 @@ public class Enemy : MonoBehaviour
 
     public void InitializeMazeData(IMaze _maze)
     {
-        currentTile = _maze.GetTile((int)transform.position.x, (int)transform.position.y);
+        Vector2Int coords = _maze.WorldToTile(transform.position);
+        currentTile = _maze.GetTile(coords.x, coords.y);
         maze = _maze;
     }
 
