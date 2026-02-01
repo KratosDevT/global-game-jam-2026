@@ -59,7 +59,7 @@ namespace Script.Level
             
             debug = true;
 
-            Tile origin = _maze.GetTile(0, 0);
+            Tile origin = _maze.GetTile(width -1, height - 1);
             Vector3 pos = _maze.TileToWorld(origin);
             GameObject temp = Instantiate(enemyPrefab, pos, Quaternion.identity);
             Enemy enemy = temp.GetComponent<Enemy>();
