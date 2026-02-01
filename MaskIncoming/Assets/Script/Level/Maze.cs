@@ -10,7 +10,15 @@ namespace Script.Level
         private float _cellSize = 1.0f;
 
         private Tile[,] _grid;
-
+        
+        public int GetWidth()
+        {
+            return _width;
+        }
+        public int GetHeight()
+        {
+            return _height;
+        }
         public Maze(int width, int height, float cellSize)
         {
             _width = width;
