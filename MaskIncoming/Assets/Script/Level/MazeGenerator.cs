@@ -285,7 +285,7 @@ namespace Script.Level
                             // Se vuoi controllo assoluto: randomFakeRot -= rot;
                         }
                         
-                        instance.Setup(isIllusory, randomFakeTexture, randomFakeRot);
+                        instance.Setup(isIllusory, randomFakeTexture, randomFakeRot, rot);
                         instance.name = $"Tile_{x}_{y}";
                         instance.SetDebug(mask);
                     }

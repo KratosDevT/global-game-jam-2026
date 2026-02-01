@@ -30,7 +30,7 @@ namespace Script.Level
             fakeMeshRenderer.SetPropertyBlock(_mpb);
         }
         
-        public void Setup(bool isIllusory, Texture inFakeTexture = null, float fakeRotation = 0f)
+        public void Setup(bool isIllusory, Texture inFakeTexture = null, float fakeRotation = 0f, float realRotation = 0f)
         {
             if (!(realRenderer != null && realSprite != null))
                 return;
@@ -54,7 +54,7 @@ namespace Script.Level
                 // set the real overlay on top
                 fakeMeshRenderer.GetPropertyBlock(_mpb);
                 _mpb.SetTexture("_MainTex", realButOnTopTexture);
-                _mpb.SetFloat("_UVRotation", 0);
+                _mpb.SetFloat("_UVRotation", realRotation);
                 fakeMeshRenderer.SetPropertyBlock(_mpb);
             }
         }
