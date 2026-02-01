@@ -39,7 +39,9 @@ namespace Script.Level
 
         public void SpawnOnlyEnemiesSigh()
         {
-            Tile playerTile = _maze.GetTile(0,0);
+            _playerTile = _maze.GetTile(0,0);
+            _occupiedTiles.Add(_playerTile);
+            RandomFill();
             SpawnEnemies();
         }
 
@@ -78,6 +80,21 @@ namespace Script.Level
             Spawn(levelConfig.ExitPrefab, _exitTile);
         }
 
+        private void RandomFill()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Tile t = PickBestTile(tile =>
+                {
+                    int d = PathDistance(tile, _altarTile);
+                    if (d < 4) return -1000;
+                    return d;
+                });
+                
+                _occupiedTiles.Add(t); 
+            }
+        }
+        
         private void SpawnOrbs()
         {
             for (int i = 0; i < levelConfig.NumberOfOrbsToSpawn; i++)
