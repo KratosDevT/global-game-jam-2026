@@ -20,15 +20,15 @@ namespace Script.Level
         private MaterialPropertyBlock _mpb;
         
         //debug
-        private void Start()
-        {
-            float randomFakeRot = Random.Range(0, 4) * 90f;
-            _mpb = new MaterialPropertyBlock();
-            fakeMeshRenderer.GetPropertyBlock(_mpb);
-            _mpb.SetTexture("_MainTex", fakeTexture);
-            _mpb.SetFloat("_UVRotation", 180f);
-            fakeMeshRenderer.SetPropertyBlock(_mpb);
-        }
+        // private void Start()
+        // {
+        //     float randomFakeRot = Random.Range(0, 4) * 90f;
+        //     _mpb = new MaterialPropertyBlock();
+        //     fakeMeshRenderer.GetPropertyBlock(_mpb);
+        //     _mpb.SetTexture("_MainTex", fakeTexture);
+        //     _mpb.SetFloat("_UVRotation", 180f);
+        //     fakeMeshRenderer.SetPropertyBlock(_mpb);
+        // }
         
         public void Setup(bool isIllusory, Texture inFakeTexture = null, float fakeRotation = 0f, float realRotation = 0f)
         {
