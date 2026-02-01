@@ -9,6 +9,7 @@ Shader "Custom/URP/RevealMaskQuad_Debug"
         _RevealRadius ("Reveal Radius", Float) = 2
         _EdgeSoftness ("Edge Softness", Float) = 0.25
         _EdgeColor ("Edge Color", Color) = (0,1,1,1)
+        _RevealEnabled ("Reveal Enabled", Float) = 0
     }
 
     SubShader
@@ -60,6 +61,7 @@ Shader "Custom/URP/RevealMaskQuad_Debug"
             float  _GlobalRevealRadius;
             float  _GlobalEdgeSoftness;
             float4 _GlobalEdgeColor;
+            float _GlobalRevealEnabled;
 
             Varyings vert (Attributes v)
             {
@@ -105,6 +107,8 @@ Shader "Custom/URP/RevealMaskQuad_Debug"
                     dist
                 );
 
+                alpha = lerp(1.0, alpha, _GlobalRevealEnabled);
+                
                 // Bordo
                 float edge = 1.0 - alpha;
                 col.rgb = lerp(col.rgb, edgeColor.rgb, edge * edgeColor.a);

@@ -6,17 +6,28 @@ namespace Script.Level
     public class IllusoryTile : MonoBehaviour
     {
         [Header("Renderers")]
-        public SpriteRenderer realRenderer; // Assegna "Real_Layer"
-        public SpriteRenderer fakeRenderer; // Assegna "Fake_Layer" (con materiale Shader)
-    
+        public SpriteRenderer realRenderer;
+        public SpriteRenderer fakeRenderer;
+        public MeshRenderer fakeMeshRenderer;
         [Header("Data")]
         public Sprite realSprite;
-        public Sprite fakeSprite;
+        public Texture fakeTexture;
         
         [Header("Debug")]
         [SerializeField, ReadOnly] private int debugMask;
         [SerializeField, ReadOnly] private string debugPaths;
 
+        private MaterialPropertyBlock _mpb;
+        
+        //debug
+        private void Start()
+        {
+            _mpb = new MaterialPropertyBlock();
+            fakeMeshRenderer.GetPropertyBlock(_mpb);
+            _mpb.SetTexture("_MainTex", fakeTexture);
+            fakeMeshRenderer.SetPropertyBlock(_mpb);
+        }
+        
         public void Setup(bool isIllusory, Sprite fakeSprite = null, float fakeRotation = 0f)
         {
             // Il Real Sprite è già corretto perché fa parte del Prefab istanziato
