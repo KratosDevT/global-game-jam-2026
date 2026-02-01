@@ -7,6 +7,9 @@ namespace Script.Level
 {
     public class MazeGenerator : MonoBehaviour
     {
+        [Header("SpawnSettings")] 
+        [SerializeField] private SpawnManager spawnManager;
+        
         [Header("Maze Settings")]
         [SerializeField] private int width = 10;
         [SerializeField] private int height = 10;
@@ -42,7 +45,7 @@ namespace Script.Level
         
         private void GenerateMaze()
         {
-            // Clean up (rimuove istanze precedenti)
+            // Clean up
             Cleanup();
 
             _maze = new Maze(width, height, cellSize);
@@ -59,11 +62,11 @@ namespace Script.Level
             
             debug = true;
 
-            Tile origin = _maze.GetTile(width -1, height - 1);
-            Vector3 pos = _maze.TileToWorld(origin);
-            GameObject temp = Instantiate(enemyPrefab, pos, Quaternion.identity);
-            Enemy enemy = temp.GetComponent<Enemy>();
-            enemy.InitializeMazeData(_maze);
+            if (spawnManager != null)
+            {
+                spawnManager.InitializeMaze(_maze);
+                spawnManager.SpawnAll();
+            }
         }
 
         private void RunRecursiveBacktracker()

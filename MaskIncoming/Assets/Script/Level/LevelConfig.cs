@@ -19,5 +19,18 @@ namespace Script.Level
         [SerializeField] private int numberOfEnemiesToSpawn;
         [SerializeField] private int numberOfOrbsToSpawn;
         [SerializeField] private int numberOfAltarsToSpawn;
+        
+        public GameObject AltarPrefab => altarPrefab;
+        public GameObject ExitPrefab => exitPrefab;
+        public GameObject KeyPrefab => keyPrefab;
+        public GameObject OrbPrefab => orbPrefab;
+        public GameObject PlayerPrefab => playerPrefab;
+        public GameObject EnemyPrefab => enemyPrefab;
+        
+        public int  NumberOfExitsToSpawn => numberOfExitsToSpawn;
+        public int NumberOfKeysToSpawn => numberOfKeysToSpawn;
+        public int NumberOfEnemiesToSpawn => numberOfEnemiesToSpawn;
+        public int NumberOfOrbsToSpawn => numberOfOrbsToSpawn;
+        public int NumberOfAltarsToSpawn => numberOfAltarsToSpawn;
     }
 }

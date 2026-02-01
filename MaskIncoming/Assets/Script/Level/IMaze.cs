@@ -5,6 +5,8 @@ namespace Script.Level
 {
     public interface IMaze
     {
+        int GetWidth();
+        int GetHeight();
         Tile GetTile(int x, int y);
         Tile GetTileFromWorld(Vector3 worldPos);
         IEnumerable<Tile> GetNeighborsMinusPrevious(Tile currentTile, Tile previousTile);
