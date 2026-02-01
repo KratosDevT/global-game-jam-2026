@@ -39,8 +39,8 @@ namespace Script.Level
 
         public void SpawnOnlyEnemiesSigh()
         {
-            Tile playerTile = _maze.GetTileFromWorld(Vector3.zero);
-            SpawnOnlyEnemiesSigh();
+            Tile playerTile = _maze.GetTile(0,0);
+            SpawnEnemies();
         }
 
         #endregion
