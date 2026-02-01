@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -16,7 +14,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float consumeSpeed = 20f;
     [SerializeField] private float regainSpeed = 15f;
     [SerializeField] private float regainDelay = 2f;
-    
+
     [Header("UI Reference")]
     [SerializeField] private Slider staminaSlider;
 
@@ -44,7 +42,7 @@ public class Player : MonoBehaviour
     private float lastTimeMaskDeactivated;
     private bool b_IsMaskOn = false;
     private int m_SpecialLayerIndex;
-    
+
     // Components
     private Rigidbody2D m_Rb;
     private Vector2 m_MoveInput;
@@ -55,6 +53,9 @@ public class Player : MonoBehaviour
     [SerializeField] private GameEvent OnMaskDeactivation;
     [SerializeField] private GameEvent OnEscapeWin;
     [SerializeField] private GameEvent OnSacrificeWin;
+
+    // Pasue
+    [SerializeField] private GameObject pauseMenu;
 
     // Wins
     private Well currentWell;
@@ -102,7 +103,7 @@ public class Player : MonoBehaviour
         if (b_IsMaskOn)
         {
             currentStamina -= consumeSpeed * Time.deltaTime;
-            
+
             if (currentStamina <= 0)
             {
                 // todo: no more mask animation
@@ -155,15 +156,15 @@ public class Player : MonoBehaviour
         }
 
         staminaFillImage.color = Color.Lerp(staminaFillImage.color, targetColor, Time.deltaTime * colorLerpSpeed);
-            
-            if (staminaPercent < 0.25f)
-            {
-                staminaSlider.transform.localPosition = sliderOriginalPos + new Vector3(
-                    Random.Range(-1f, 1f),
-                    Random.Range(-1f, 1f),
-                    0);
-            }
+
+        if (staminaPercent < 0.25f)
+        {
+            staminaSlider.transform.localPosition = sliderOriginalPos + new Vector3(
+                Random.Range(-1f, 1f),
+                Random.Range(-1f, 1f),
+                0);
         }
+    }
 
     // Movement
 
@@ -189,18 +190,18 @@ public class Player : MonoBehaviour
 
     public void OnMaskPower(InputValue value)
     {
-        if(value.isPressed)
+        if (value.isPressed)
         {
-            if(!b_IsMaskOn && currentStamina > 20f)
+            if (!b_IsMaskOn && currentStamina > 20f)
             {
                 ActivatePower();
             }
-            else if(b_IsMaskOn)
+            else if (b_IsMaskOn)
             {
                 b_IsMaskOn = false;
                 lastTimeMaskDeactivated = Time.time;
                 DeactivatePower();
-                if(OnMaskDeactivation)
+                if (OnMaskDeactivation)
                     OnMaskDeactivation.Raise();
             }
 
@@ -211,7 +212,7 @@ public class Player : MonoBehaviour
     void ActivatePower()
     {
         b_IsMaskOn = true;
-        if(OnMaskActivation)
+        if (OnMaskActivation)
             OnMaskActivation.Raise();
     }
 
@@ -219,7 +220,7 @@ public class Player : MonoBehaviour
     {
         b_IsMaskOn = false;
         lastTimeMaskDeactivated = Time.time;
-        if(OnMaskDeactivation)
+        if (OnMaskDeactivation)
             OnMaskDeactivation.Raise();
     }
 
@@ -228,7 +229,7 @@ public class Player : MonoBehaviour
     public void TakeDamage()
     {
         GetComponent<SpriteRenderer>().color = Color.red;
-        Invoke("ResetColor", 0.5f); 
+        Invoke("ResetColor", 0.5f);
 
         if (m_CurrentHealth > 0)
         {
@@ -237,13 +238,13 @@ public class Player : MonoBehaviour
         }
         if (m_CurrentHealth <= 0)
         {
-            if(b_IsMaskOn) 
+            if (b_IsMaskOn)
             {
                 // todo: Special death
                 Debug.Log("Morte speciale con maschera!");
                 SpecialDeath();
-            } 
-            else 
+            }
+            else
             {
                 // todo: normal death
                 Debug.Log("Morte normale!");
@@ -258,7 +259,7 @@ public class Player : MonoBehaviour
     {
         Color horrorRed;
         ColorUtility.TryParseHtmlString("#5a0000", out horrorRed);
-        
+
         for (int i = 0; i < heartIcons.Length; i++)
         {
             if (i < m_CurrentHealth)
@@ -276,7 +277,7 @@ public class Player : MonoBehaviour
 
     private void SpecialDeath()
     {
-        
+
     }
 
     private void NormalDeath()
@@ -306,6 +307,16 @@ public class Player : MonoBehaviour
         else if (m_CanSacrifice)
         {
             TrySacrifice();
+        }
+    }
+
+    public void OnPause(InputValue value)
+    {
+        Debug.Log("P pressed");
+
+        if (value.isPressed)
+        {
+            Debug.Log("PAUSA");
         }
     }
 
@@ -346,7 +357,7 @@ public class Player : MonoBehaviour
     {
         if (b_HasKeyCollectable)
         {
-            if(OnEscapeWin)
+            if (OnEscapeWin)
                 OnEscapeWin.Raise();
             Debug.Log("VITTORIA! Il Player ha usato la chiave ed è scappato.");
         }
@@ -365,7 +376,7 @@ public class Player : MonoBehaviour
     {
         if (m_SalvationTools >= 3)
         {
-            if(OnSacrificeWin)
+            if (OnSacrificeWin)
                 OnSacrificeWin.Raise();
             Debug.Log("RITUALE COMPLETATO! Hai usato i 3 Salvation Tools.");
         }
