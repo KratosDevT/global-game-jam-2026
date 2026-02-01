@@ -22,7 +22,7 @@ public class Altar : MonoBehaviour
                 if (tools >= 3)
                     promptText.text = "Press [E] to the final sacrifice!";
                 else
-                    promptText.text = "You need gifts... (" + tools + "/3)";
+                    promptText.text = "You need souls... (" + tools + "/3)";
             }
         }
     }

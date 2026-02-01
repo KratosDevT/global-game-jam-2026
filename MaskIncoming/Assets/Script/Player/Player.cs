@@ -53,6 +53,8 @@ public class Player : MonoBehaviour
     // Events
     [SerializeField] private GameEvent OnMaskActivation;
     [SerializeField] private GameEvent OnMaskDeactivation;
+    [SerializeField] private GameEvent OnEscapeWin;
+    [SerializeField] private GameEvent OnSacrificeWin;
 
     // Wins
     private Well currentWell;
@@ -344,6 +346,8 @@ public class Player : MonoBehaviour
     {
         if (b_HasKeyCollectable)
         {
+            if(OnEscapeWin)
+                OnEscapeWin.Raise();
             Debug.Log("VITTORIA! Il Player ha usato la chiave ed è scappato.");
         }
         else
@@ -361,6 +365,8 @@ public class Player : MonoBehaviour
     {
         if (m_SalvationTools >= 3)
         {
+            if(OnSacrificeWin)
+                OnSacrificeWin.Raise();
             Debug.Log("RITUALE COMPLETATO! Hai usato i 3 Salvation Tools.");
         }
         else
