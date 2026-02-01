@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameEvent OnMaskDeactivation;
     [SerializeField] private GameEvent OnEscapeWin;
     [SerializeField] private GameEvent OnSacrificeWin;
+    [SerializeField] private GameEvent OnGameOver;
 
     // Pasue
     [SerializeField] private GameObject pauseMenu;
@@ -238,6 +239,7 @@ public class Player : MonoBehaviour
         }
         if (m_CurrentHealth <= 0)
         {
+            Death();
             if (b_IsMaskOn)
             {
                 // todo: Special death
@@ -275,8 +277,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SpecialDeath()
+    private void Death()
     {
+        Debug.Log("You Die");
+        if(OnGameOver)
+                OnGameOver.Raise();
 
     }
 
