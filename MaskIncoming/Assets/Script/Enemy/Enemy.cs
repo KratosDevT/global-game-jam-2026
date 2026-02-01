@@ -8,13 +8,13 @@ using System.Linq;
 public class Enemy : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 2.0f;
-    [SerializeField] private float patrolSpeed = 2.0f;
-    [SerializeField] private float chaseSpeed = 6.0f;
-    [SerializeField] private float chaseRadius = 6.0f;
+    [SerializeField] private float moveSpeed = 3.0f;
+    [SerializeField] private float patrolSpeed = 3.0f;
+    [SerializeField] private float chaseSpeed = 9.0f;
+    [SerializeField] private float chaseRadius = 20.0f;
 
     [Header("Chase")]
-    [SerializeField] private float blinkInterval = 0.15f;
+    [SerializeField] private float blinkInterval = 0.1f;
 
     private Rigidbody2D rb;
     private Animator animator;
@@ -45,8 +45,7 @@ public class Enemy : MonoBehaviour
     private bool isPlayerMasked = false;
     private List<Tile> pathToPlayer = new List<Tile>();
     private Coroutine blinkCoroutine;
-
-    private bool needsPathRecalculation = false;
+    private bool isDying = false;
 
     void Start()
     {
@@ -122,30 +121,39 @@ public class Enemy : MonoBehaviour
 
     void PatrolBehavior(Vector2 currentPos)
     {
-        moveSpeed = patrolSpeed;
+
         Vector2 direction = (targetPosition - currentPos).normalized;
         movement = direction;
 
-        if (ShouldChase() && needsPathRecalculation)
+        if (ShouldChase())
         {
-            Vector2Int playerCoords = maze.WorldToTile(player.transform.position);
-            Tile playerTile = maze.GetTile(playerCoords.x, playerCoords.y);
-            pathToPlayer = maze.Pathfinding(currentTile, playerTile);
-
-            if (pathToPlayer.Count > 0)
-            {
-                targetTile = pathToPlayer[0];
-                targetPosition = maze.TileToWorld(targetTile);
-                EnterChase();
-                return;
-            }
+            moveSpeed = chaseSpeed;
+        }
+        else
+        {
+            moveSpeed = patrolSpeed;
         }
 
         if (distanceToTarget < arrivalThreshold)
         {
             previousTile = currentTile;
             currentTile = targetTile;
-            needsPathRecalculation = true;
+
+            if (ShouldChase())
+            {
+                Vector2Int playerCoords = maze.WorldToTile(player.transform.position);
+                Tile playerTile = maze.GetTile(playerCoords.x, playerCoords.y);
+                pathToPlayer = maze.Pathfinding(currentTile, playerTile);
+
+                if (pathToPlayer.Count > 0)
+                {
+                    targetTile = pathToPlayer[0];
+                    targetPosition = maze.TileToWorld(targetTile);
+                    EnterChase();
+                    return;
+                }
+            }
+
             currentState = EnemyState.Idle;
         }
     }
@@ -178,7 +186,6 @@ public class Enemy : MonoBehaviour
             previousTile = currentTile;
             currentTile = targetTile;
 
-            // Ricalcola il percorso ogni volta che arriva al centro di un tile
             Vector2Int playerCoords = maze.WorldToTile(player.transform.position);
             Tile playerTile = maze.GetTile(playerCoords.x, playerCoords.y);
             pathToPlayer = maze.Pathfinding(currentTile, playerTile);
@@ -192,6 +199,7 @@ public class Enemy : MonoBehaviour
             targetTile = pathToPlayer[0];
             targetPosition = maze.TileToWorld(targetTile);
         }
+        Debug.Log("Path Chasing: " + string.Join(" -> ", pathToPlayer.Select(t => $"({t.X},{t.Y})")));
     }
 
     void EnterChase()
@@ -204,7 +212,6 @@ public class Enemy : MonoBehaviour
     {
         pathToPlayer.Clear();
         currentState = EnemyState.Patrol;
-        needsPathRecalculation = true;
 
         if (blinkCoroutine != null)
         {
@@ -248,7 +255,15 @@ public class Enemy : MonoBehaviour
 
     void CalculateTargetTile()
     {
-        List<Tile> list = maze.GetNeighborsMinusPrevious(currentTile, previousTile).ToList();
+        List<Tile> list = null;
+        if (ShouldChase())
+        {
+            list = maze.GetNeighbors(currentTile).ToList();
+        }
+        else
+        {
+            list = maze.GetNeighborsMinusPrevious(currentTile, previousTile).ToList();
+        }
 
         if (list.Count > 0)
         {
@@ -265,12 +280,15 @@ public class Enemy : MonoBehaviour
 
     void OnCollisionStay2D(Collision2D collision)
     {
+        if (isDying) return;
+
         if (collision.gameObject.CompareTag("Player"))
         {
             if (onPlayerDamage)
             {
+                isDying = true;
+                Destroy(gameObject, 0.1f);
                 onPlayerDamage.Raise();
-                Destroy(this, 0.1f);
             }
             else
             {
@@ -289,7 +307,6 @@ public class Enemy : MonoBehaviour
     public void OnPlayerMask()
     {
         isPlayerMasked = true;
-        needsPathRecalculation = true;
     }
 
     public void OnPlayerUnmask()
