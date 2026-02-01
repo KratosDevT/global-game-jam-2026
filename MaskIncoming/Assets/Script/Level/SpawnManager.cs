@@ -102,7 +102,7 @@ namespace Script.Level
         {
             List<Tile> freeTiles = new(GetFreeTiles());
 
-            int count = Mathf.Min(10, freeTiles.Count);
+            int count = Mathf.Min(4, freeTiles.Count);
 
             for (int i = 0; i < count; i++)
             {
