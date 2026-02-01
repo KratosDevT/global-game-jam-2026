@@ -58,6 +58,8 @@ public class Player : MonoBehaviour
     private float targetLayerWeight = 0f;
     private bool b_HasKeyCollectable = false;
     private int m_SalvationTools = 0;
+    private Well currentWell;
+    private bool m_CanEscape = false;
 
     void Awake()
     {
@@ -284,6 +286,21 @@ public class Player : MonoBehaviour
         if (keyIconUI != null) keyIconUI.SetActive(true);
     }
 
+    public bool HasKey()
+    {
+        return b_HasKeyCollectable;
+    }
+
+    public void OnInteract(InputValue value)
+    {
+        if (value.isPressed && m_CanEscape)
+        {
+            TryEscape();
+        }
+    }
+
+    public void SetCurrentWell(Well well) { currentWell = well; }
+
     public void PickSalvationTool()
     {
         if (m_SalvationTools < 3)
@@ -306,5 +323,24 @@ public class Player : MonoBehaviour
                 salvationToolIcons[i].SetActive(false);
             }
         }
+    }
+
+    // Wins
+
+    private void TryEscape()
+    {
+        if (b_HasKeyCollectable)
+        {
+            Debug.Log("VITTORIA! Il Player ha usato la chiave ed è scappato.");
+        }
+        else
+        {
+            Debug.Log("Il Player prova ad aprire ma non ha la chiave...");
+        }
+    }
+
+    public void SetCanEscape(bool canEscape)
+    {
+        m_CanEscape = canEscape;
     }
 }
