@@ -233,11 +233,13 @@ public class Player : MonoBehaviour
             {
                 // todo: Special death
                 Debug.Log("Morte speciale con maschera!");
+                SpecialDeath();
             } 
             else 
             {
                 // todo: normal death
                 Debug.Log("Morte normale!");
+                NormalDeath();
             }
         }
     }
@@ -262,6 +264,16 @@ public class Player : MonoBehaviour
                 heartIcons[i].color = deadHeartColor;
             }
         }
+    }
+
+    private void SpecialDeath()
+    {
+        
+    }
+
+    private void NormalDeath()
+    {
+
     }
 
     // Collectables
