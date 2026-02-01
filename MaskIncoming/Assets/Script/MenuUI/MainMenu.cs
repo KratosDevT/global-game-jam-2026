@@ -4,10 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    [SerializeField] private GameObject loreDescription;
+
     public void PlayGame()
     {
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         SceneManager.LoadScene("MainLevel");
+    }
+
+    public void OpenLore()
+    {
+        loreDescription.SetActive(true);
     }
 
     public void QuitGame()
