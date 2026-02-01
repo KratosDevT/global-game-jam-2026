@@ -240,18 +240,6 @@ public class Player : MonoBehaviour
         if (m_CurrentHealth <= 0)
         {
             Death();
-            if (b_IsMaskOn)
-            {
-                // todo: Special death
-                Debug.Log("Morte speciale con maschera!");
-                SpecialDeath();
-            }
-            else
-            {
-                // todo: normal death
-                Debug.Log("Morte normale!");
-                NormalDeath();
-            }
         }
     }
 
@@ -282,11 +270,6 @@ public class Player : MonoBehaviour
         Debug.Log("You Die");
         if(OnGameOver)
                 OnGameOver.Raise();
-
-    }
-
-    private void NormalDeath()
-    {
 
     }
 
