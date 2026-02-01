@@ -22,7 +22,7 @@ namespace Script.Level
         [SerializeField] private IllusoryTile quadTile;   // cross
 
         [Header("Fake Pool")]
-        [SerializeField] private List<Sprite> availableFakeSprites;
+        [SerializeField] private List<Texture> availableFakeTexture;
         
         [SerializeField] private GameObject enemyPrefab;
         
@@ -270,16 +270,12 @@ namespace Script.Level
                         
                         // LOGICA ILLUSORIA RANDOM
                         bool isIllusory = Random.value < illusoryChance;
-                        Sprite randomFakeSprite = null;
+                        Texture randomFakeTexture = null;
                         float randomFakeRot = 0;
 
-                        if (isIllusory && availableFakeSprites.Count > 0)
+                        if (isIllusory && availableFakeTexture.Count > 0)
                         {
-                            // 1. Pesca uno sprite a caso dalla lista
-                            randomFakeSprite = availableFakeSprites[Random.Range(0, availableFakeSprites.Count)];
-                        
-                            // 2. Ruotalo a caso (0, 90, 180, 270)
-                            // Moltiplichiamo per 90 per avere angoli retti precisi
+                            randomFakeTexture = availableFakeTexture[Random.Range(0, availableFakeTexture.Count)];
                             randomFakeRot = Random.Range(0, 4) * 90f;
                         
                             // NOTA: Poiché 'fakeRenderer' è figlio dell'oggetto ruotato,
@@ -288,8 +284,8 @@ namespace Script.Level
                             // dovremmo sottrarre la rotazione del padre, ma spesso sommarla aumenta solo il caos (che va bene).
                             // Se vuoi controllo assoluto: randomFakeRot -= rot;
                         }
-
-                        instance.Setup(isIllusory, randomFakeSprite, randomFakeRot);
+                        
+                        instance.Setup(isIllusory, randomFakeTexture, randomFakeRot);
                         instance.name = $"Tile_{x}_{y}";
                         instance.SetDebug(mask);
                     }

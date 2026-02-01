@@ -46,23 +46,25 @@ Shader "Custom/URP/RevealMaskQuad_Debug"
                 float3 worldPos : TEXCOORD1;
             };
 
+            // ───── Material properties
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
             float4 _Tint;
+            float  _UVRotation;
 
             // ───── Material properties (debug)
             float4 _RevealCenterWS;
             float  _RevealRadius;
             float  _EdgeSoftness;
             float4 _EdgeColor;
-
+            
             // ───── Global overrides (runtime)
             float3 _GlobalRevealPos;
             float  _GlobalRevealRadius;
             float  _GlobalEdgeSoftness;
             float4 _GlobalEdgeColor;
             float _GlobalRevealEnabled;
-
+            
             Varyings vert (Attributes v)
             {
                 Varyings o;
@@ -73,9 +75,28 @@ Shader "Custom/URP/RevealMaskQuad_Debug"
                 return o;
             }
 
+            float2 RotateUV(float2 uv, float angleDeg)
+            {
+                float rad = radians(angleDeg);
+                float s = sin(rad);
+                float c = cos(rad);
+
+                uv -= 0.5;
+                uv = float2(
+                    uv.x * c - uv.y * s,
+                    uv.x * s + uv.y * c
+                );
+                uv += 0.5;
+
+                return uv;
+            }
+            
             half4 frag (Varyings i) : SV_Target
             {
-                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv) * _Tint;
+                // Rotate the uv
+                float2 uv = RotateUV(i.uv, _UVRotation);
+                
+                half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv) * _Tint;
 
                 // ───── SCEGLIAMO LA SORGENTE DATI
                 float2 center =

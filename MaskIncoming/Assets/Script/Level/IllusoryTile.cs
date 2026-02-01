@@ -7,13 +7,13 @@ namespace Script.Level
     {
         [Header("Renderers")]
         public SpriteRenderer realRenderer;
-        public SpriteRenderer fakeRenderer;
         public MeshRenderer fakeMeshRenderer;
         [Header("Data")]
         public Sprite realSprite;
+        public Texture realButOnTopTexture;
         public Texture fakeTexture;
         
-        [Header("Debug")]
+        [Header("Debug Path of Tiles")]
         [SerializeField, ReadOnly] private int debugMask;
         [SerializeField, ReadOnly] private string debugPaths;
 
@@ -22,28 +22,40 @@ namespace Script.Level
         //debug
         private void Start()
         {
+            float randomFakeRot = Random.Range(0, 4) * 90f;
             _mpb = new MaterialPropertyBlock();
             fakeMeshRenderer.GetPropertyBlock(_mpb);
             _mpb.SetTexture("_MainTex", fakeTexture);
+            _mpb.SetFloat("_UVRotation", 180f);
             fakeMeshRenderer.SetPropertyBlock(_mpb);
         }
         
-        public void Setup(bool isIllusory, Sprite fakeSprite = null, float fakeRotation = 0f)
+        public void Setup(bool isIllusory, Texture inFakeTexture = null, float fakeRotation = 0f)
         {
-            // Il Real Sprite è già corretto perché fa parte del Prefab istanziato
-        
-            if (isIllusory && fakeSprite != null)
-            {
-                fakeRenderer.gameObject.SetActive(true);
-                fakeRenderer.sprite = fakeSprite;
+            if (!(realRenderer != null && realSprite != null))
+                return;
             
-                // Applichiamo una rotazione locale allo sprite finto
-                // così è indipendente dalla rotazione della strada vera
-                fakeRenderer.transform.localRotation = Quaternion.Euler(0, 0, fakeRotation);
+            // To be sure set also the real sprite
+            realRenderer.sprite = realSprite;
+        
+            // Set the real/fake overlay
+            fakeMeshRenderer.gameObject.SetActive(true);
+            _mpb ??= new MaterialPropertyBlock();
+            
+            if (isIllusory && inFakeTexture != null)
+            {
+                fakeMeshRenderer.GetPropertyBlock(_mpb);
+                _mpb.SetTexture("_MainTex", fakeTexture);
+                _mpb.SetFloat("_UVRotation", fakeRotation);
+                fakeMeshRenderer.SetPropertyBlock(_mpb);
             }
             else
             {
-                fakeRenderer.gameObject.SetActive(false);
+                // set the real overlay on top
+                fakeMeshRenderer.GetPropertyBlock(_mpb);
+                _mpb.SetTexture("_MainTex", realButOnTopTexture);
+                _mpb.SetFloat("_UVRotation", 0);
+                fakeMeshRenderer.SetPropertyBlock(_mpb);
             }
         }
         
