@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameEvent OnSacrificeWin;
     [SerializeField] private GameEvent OnGameOver;
 
-    // Pasue
+    // Pause
     [SerializeField] private GameObject pauseMenu;
 
     // Wins
@@ -268,8 +268,8 @@ public class Player : MonoBehaviour
     private void Death()
     {
         Debug.Log("You Die");
-        if(OnGameOver)
-                OnGameOver.Raise();
+        if (OnGameOver)
+            OnGameOver.Raise();
 
     }
 
@@ -305,6 +305,7 @@ public class Player : MonoBehaviour
         if (value.isPressed)
         {
             Debug.Log("PAUSA");
+            pauseMenu.SetActive(true);
         }
     }
 

@@ -2,18 +2,8 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject pauseMenu;
+    [SerializeField] GameObject pauseMenu;
     private bool isPaused;
-
-    //public void OnPause(InputValue value)
-    //{
-    //    Debug.Log("P pressed");
-
-    //    if (value.isPressed)
-    //    {
-    //        pauseMenu.SetActive(true);
-    //    }
-    //}
 
     public void PauseGame()
     {
