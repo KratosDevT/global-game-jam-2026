@@ -46,6 +46,8 @@ public class Enemy : MonoBehaviour
     private List<Tile> pathToPlayer = new List<Tile>();
     private Coroutine blinkCoroutine;
 
+    private bool needsPathRecalculation = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -124,7 +126,7 @@ public class Enemy : MonoBehaviour
         Vector2 direction = (targetPosition - currentPos).normalized;
         movement = direction;
 
-        if (ShouldChase())
+        if (ShouldChase() && needsPathRecalculation)
         {
             Vector2Int playerCoords = maze.WorldToTile(player.transform.position);
             Tile playerTile = maze.GetTile(playerCoords.x, playerCoords.y);
@@ -143,6 +145,7 @@ public class Enemy : MonoBehaviour
         {
             previousTile = currentTile;
             currentTile = targetTile;
+            needsPathRecalculation = true;
             currentState = EnemyState.Idle;
         }
     }
@@ -201,6 +204,7 @@ public class Enemy : MonoBehaviour
     {
         pathToPlayer.Clear();
         currentState = EnemyState.Patrol;
+        needsPathRecalculation = true;
 
         if (blinkCoroutine != null)
         {
@@ -285,6 +289,7 @@ public class Enemy : MonoBehaviour
     public void OnPlayerMask()
     {
         isPlayerMasked = true;
+        needsPathRecalculation = true;
     }
 
     public void OnPlayerUnmask()
