@@ -34,6 +34,10 @@ public class Player : MonoBehaviour
     [SerializeField] private Sprite emptyHeartSprite;
     [SerializeField] private Color deadHeartColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
 
+    [Header("Collectables UI")]
+    [SerializeField] private GameObject keyIconUI;
+    [SerializeField] private GameObject[] salvationToolIcons;
+
     // SpecialPower
     private Coroutine weightCoroutine;
     private float currentStamina;
@@ -52,6 +56,8 @@ public class Player : MonoBehaviour
 
     private int m_CurrentHealth;
     private float targetLayerWeight = 0f;
+    private bool b_HasKeyCollectable = false;
+    private int m_SalvationTools = 0;
 
     void Awake()
     {
@@ -77,6 +83,9 @@ public class Player : MonoBehaviour
 
         m_CurrentHealth = heartIcons.Length;
         UpdateHealthUI();
+
+        if (keyIconUI != null) keyIconUI.SetActive(false);
+        UpdateSalvationUI();
     }
 
     void Update()
@@ -92,8 +101,7 @@ public class Player : MonoBehaviour
                 currentStamina = 0;
                 DeactivatePower();
 
-                if (weightCoroutine != null) StopCoroutine(weightCoroutine);
-                m_Animator.SetLayerWeight(m_SpecialLayerIndex, 0f);
+                targetLayerWeight = 0f;
 
                 TakeDamage();
             }
@@ -207,12 +215,12 @@ public class Player : MonoBehaviour
             OnMaskDeactivation.Raise();
     }
 
-    // Lifes
+    // Lifes and Deaths
 
     public void TakeDamage()
     {
         GetComponent<SpriteRenderer>().color = Color.red;
-        Invoke("ResetColor", 0.1f); 
+        Invoke("ResetColor", 0.5f); 
 
         if (m_CurrentHealth > 0)
         {
@@ -252,6 +260,38 @@ public class Player : MonoBehaviour
             {
                 heartIcons[i].sprite = emptyHeartSprite;
                 heartIcons[i].color = deadHeartColor;
+            }
+        }
+    }
+
+    // Collectables
+
+    public void PickKey()
+    {
+        b_HasKeyCollectable = true;
+        if (keyIconUI != null) keyIconUI.SetActive(true);
+    }
+
+    public void PickSalvationTool()
+    {
+        if (m_SalvationTools < 3)
+        {
+            m_SalvationTools += 1;
+            UpdateSalvationUI();
+        }
+    }
+
+    private void UpdateSalvationUI()
+    {
+        for (int i = 0; i < salvationToolIcons.Length; i++)
+        {
+            if (i < m_SalvationTools)
+            {
+                salvationToolIcons[i].SetActive(true);
+            }
+            else
+            {
+                salvationToolIcons[i].SetActive(false);
             }
         }
     }
