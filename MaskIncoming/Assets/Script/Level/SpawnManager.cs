@@ -43,7 +43,8 @@ namespace Script.Level
             _playerTile = _maze.GetTile(0,0);
             _occupiedTiles.Add(_playerTile);
             RandomFill();
-            SpawnEnemies();
+            //SpawnEnemies();
+            RandomEnemySpawn();
         }
 
         #endregion
@@ -85,7 +86,7 @@ namespace Script.Level
         {
             List<Tile> freeTiles = new(GetFreeTiles());
 
-            int count = Mathf.Min(10, freeTiles.Count);
+            int count = Mathf.Min(4, freeTiles.Count);
 
             for (int i = 0; i < count; i++)
             {
@@ -94,6 +95,23 @@ namespace Script.Level
 
                 _occupiedTiles.Add(t);
                 freeTiles.RemoveAt(index); // evita duplicati
+            }
+        }
+        
+        private void RandomEnemySpawn()
+        {
+            List<Tile> freeTiles = new(GetFreeTiles());
+
+            int count = Mathf.Min(4, freeTiles.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                int index = Random.Range(0, freeTiles.Count);
+                Tile t = freeTiles[index];
+
+                _occupiedTiles.Add(t);
+                freeTiles.RemoveAt(index);
+                SpawnEnemy(levelConfig.EnemyPrefab, t);
             }
         }
         
