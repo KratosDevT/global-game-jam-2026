@@ -56,6 +56,7 @@ namespace Script.Level
         private void SpawnAltar()
         {
             _altarTile = PickCentralTile();
+            _occupiedTiles.Add(_altarTile); 
             Spawn(levelConfig.AltarPrefab, _altarTile);
         }
         
@@ -65,6 +66,7 @@ namespace Script.Level
                 PathDistance(t, _altarTile)
             );
 
+            _occupiedTiles.Add(_exitTile);
             Spawn(levelConfig.ExitPrefab, _exitTile);
         }
 
@@ -80,6 +82,7 @@ namespace Script.Level
                 });
 
                 _orbTiles.Add(t);
+                _occupiedTiles.Add(t); 
                 Spawn(levelConfig.OrbPrefab, t);
             }
         }
@@ -96,6 +99,7 @@ namespace Script.Level
                 });
 
                 _keyTiles.Add(t);
+                _occupiedTiles.Add(t); 
                 Spawn(levelConfig.KeyPrefab, t);
             }
         }
@@ -123,6 +127,7 @@ namespace Script.Level
                 });
 
                 _enemyTiles.Add(t);
+                _occupiedTiles.Add(t); 
                 SpawnEnemy(levelConfig.EnemyPrefab, t);
             }
         }
