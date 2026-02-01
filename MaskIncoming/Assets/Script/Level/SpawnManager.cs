@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Script.Level
 {
@@ -9,6 +10,8 @@ namespace Script.Level
         [SerializeField] private LevelConfig levelConfig;
         private IMaze _maze;
 
+        [SerializeField] private int numberOfEnemiesToSpawn;
+        
         private List<Tile> _occupiedTiles = new();
         private List<Tile> _enemyTiles = new();
         private List<Tile> _keyTiles = new();
@@ -35,6 +38,15 @@ namespace Script.Level
             SpawnEnemies();
         }
 
+        public void SpawnOnlyEnemiesSigh()
+        {
+            _playerTile = _maze.GetTile(0,0);
+            _occupiedTiles.Add(_playerTile);
+            RandomFill();
+            //SpawnEnemies();
+            RandomEnemySpawn();
+        }
+
         #endregion
         
         #region Spawn Methods
@@ -56,6 +68,7 @@ namespace Script.Level
         private void SpawnAltar()
         {
             _altarTile = PickCentralTile();
+            _occupiedTiles.Add(_altarTile); 
             Spawn(levelConfig.AltarPrefab, _altarTile);
         }
         
@@ -65,9 +78,43 @@ namespace Script.Level
                 PathDistance(t, _altarTile)
             );
 
+            _occupiedTiles.Add(_exitTile);
             Spawn(levelConfig.ExitPrefab, _exitTile);
         }
 
+        private void RandomFill()
+        {
+            List<Tile> freeTiles = new(GetFreeTiles());
+
+            int count = Mathf.Min(4, freeTiles.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                int index = Random.Range(0, freeTiles.Count);
+                Tile t = freeTiles[index];
+
+                _occupiedTiles.Add(t);
+                freeTiles.RemoveAt(index); // evita duplicati
+            }
+        }
+        
+        private void RandomEnemySpawn()
+        {
+            List<Tile> freeTiles = new(GetFreeTiles());
+
+            int count = Mathf.Min(4, freeTiles.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                int index = Random.Range(0, freeTiles.Count);
+                Tile t = freeTiles[index];
+
+                _occupiedTiles.Add(t);
+                freeTiles.RemoveAt(index);
+                SpawnEnemy(levelConfig.EnemyPrefab, t);
+            }
+        }
+        
         private void SpawnOrbs()
         {
             for (int i = 0; i < levelConfig.NumberOfOrbsToSpawn; i++)
@@ -80,6 +127,7 @@ namespace Script.Level
                 });
 
                 _orbTiles.Add(t);
+                _occupiedTiles.Add(t); 
                 Spawn(levelConfig.OrbPrefab, t);
             }
         }
@@ -96,6 +144,7 @@ namespace Script.Level
                 });
 
                 _keyTiles.Add(t);
+                _occupiedTiles.Add(t); 
                 Spawn(levelConfig.KeyPrefab, t);
             }
         }
@@ -110,7 +159,7 @@ namespace Script.Level
 
             Spawn(levelConfig.PlayerPrefab, _playerTile);
         }
-
+        
         private void SpawnEnemies()
         {
             for (int i = 0; i < levelConfig.NumberOfEnemiesToSpawn; i++)
@@ -123,6 +172,7 @@ namespace Script.Level
                 });
 
                 _enemyTiles.Add(t);
+                _occupiedTiles.Add(t); 
                 SpawnEnemy(levelConfig.EnemyPrefab, t);
             }
         }
