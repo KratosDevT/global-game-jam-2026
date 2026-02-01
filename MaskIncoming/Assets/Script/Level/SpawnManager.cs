@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Script.Level
 {
@@ -82,16 +83,17 @@ namespace Script.Level
 
         private void RandomFill()
         {
-            for (int i = 0; i < 10; i++)
+            List<Tile> freeTiles = new(GetFreeTiles());
+
+            int count = Mathf.Min(10, freeTiles.Count);
+
+            for (int i = 0; i < count; i++)
             {
-                Tile t = PickBestTile(tile =>
-                {
-                    int d = PathDistance(tile, _altarTile);
-                    if (d < 4) return -1000;
-                    return d;
-                });
-                
-                _occupiedTiles.Add(t); 
+                int index = Random.Range(0, freeTiles.Count);
+                Tile t = freeTiles[index];
+
+                _occupiedTiles.Add(t);
+                freeTiles.RemoveAt(index); // evita duplicati
             }
         }
         
