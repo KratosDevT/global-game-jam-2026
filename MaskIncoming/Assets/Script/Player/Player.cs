@@ -54,12 +54,16 @@ public class Player : MonoBehaviour
     [SerializeField] private GameEvent OnMaskActivation;
     [SerializeField] private GameEvent OnMaskDeactivation;
 
+    // Wins
+    private Well currentWell;
+    private bool m_CanEscape = false;
+    private bool m_CanSacrifice = false;
+
+    // Members
     private int m_CurrentHealth;
     private float targetLayerWeight = 0f;
     private bool b_HasKeyCollectable = false;
     private int m_SalvationTools = 0;
-    private Well currentWell;
-    private bool m_CanEscape = false;
 
     void Awake()
     {
@@ -297,6 +301,10 @@ public class Player : MonoBehaviour
         {
             TryEscape();
         }
+        else if (m_CanSacrifice)
+        {
+            TrySacrifice();
+        }
     }
 
     public void SetCurrentWell(Well well) { currentWell = well; }
@@ -308,6 +316,11 @@ public class Player : MonoBehaviour
             m_SalvationTools += 1;
             UpdateSalvationUI();
         }
+    }
+
+    public int GetSalvationToolsCount()
+    {
+        return m_SalvationTools;
     }
 
     private void UpdateSalvationUI()
@@ -342,5 +355,22 @@ public class Player : MonoBehaviour
     public void SetCanEscape(bool canEscape)
     {
         m_CanEscape = canEscape;
+    }
+
+    private void TrySacrifice()
+    {
+        if (m_SalvationTools >= 3)
+        {
+            Debug.Log("RITUALE COMPLETATO! Hai usato i 3 Salvation Tools.");
+        }
+        else
+        {
+            Debug.Log("L'altare resta freddo... servono più strumenti.");
+        }
+    }
+
+    public void SetCanSacrifice(bool canSacrifice)
+    {
+        m_CanSacrifice = canSacrifice;
     }
 }
