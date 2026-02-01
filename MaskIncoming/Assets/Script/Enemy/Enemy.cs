@@ -10,11 +10,15 @@ public class Enemy : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2.0f;
     [SerializeField] private float patrolSpeed = 2.0f;
-    [SerializeField] private float chaseSpeed = 3.0f;
-    [SerializeField] private float chaseRadius = 3.0f;
+    [SerializeField] private float chaseSpeed = 6.0f;
+    [SerializeField] private float chaseRadius = 6.0f;
+
+    [Header("Chase")]
+    [SerializeField] private float blinkInterval = 0.15f;
 
     private Rigidbody2D rb;
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
     private GameObject player;
     private Vector2 movement;
 
@@ -38,10 +42,15 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] private GameEvent onPlayerDamage;
 
+    private bool isPlayerMasked = false;
+    private List<Tile> pathToPlayer = new List<Tile>();
+    private Coroutine blinkCoroutine;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (rb == null)
         {
@@ -104,18 +113,30 @@ public class Enemy : MonoBehaviour
         UpdateAnimator();
     }
 
+    private bool ShouldChase()
+    {
+        return distanceToPlayer <= chaseRadius && isPlayerMasked;
+    }
+
     void PatrolBehavior(Vector2 currentPos)
     {
         moveSpeed = patrolSpeed;
         Vector2 direction = (targetPosition - currentPos).normalized;
         movement = direction;
 
-        // if (distanceToPlayer <= chaseRadius)
-        // {
-        //     //currentState = EnemyState.Chase;
-        //     // calculateTile to Player
-        //     return;
-        // }
+        if (ShouldChase())
+        {
+            Tile playerTile = maze.GetTile((int)player.transform.position.x, (int)player.transform.position.y);
+            pathToPlayer = maze.Pathfinding(currentTile, playerTile);
+
+            if (pathToPlayer.Count > 0)
+            {
+                targetTile = pathToPlayer[0];
+                targetPosition = maze.TileToWorld(targetTile);
+                EnterChase();
+                return;
+            }
+        }
 
         if (distanceToTarget < arrivalThreshold)
         {
@@ -138,13 +159,66 @@ public class Enemy : MonoBehaviour
     void ChaseBehavior(Vector2 currentPos)
     {
         moveSpeed = chaseSpeed;
-        //casistica che va verso il player
 
-        // // Insegue il player
-        // Vector2 direction = (player.transform.position - (Vector3)currentPos).normalized;
-        // movement = direction;
+        if (!ShouldChase())
+        {
+            ExitChase();
+            return;
+        }
+
+        Vector2 direction = (targetPosition - currentPos).normalized;
+        movement = direction;
+
+        if (distanceToTarget < arrivalThreshold)
+        {
+            previousTile = currentTile;
+            currentTile = targetTile;
+
+            // Ricalcola il percorso ogni volta che arriva al centro di un tile
+            Tile playerTile = maze.GetTile((int)player.transform.position.x, (int)player.transform.position.y);
+            pathToPlayer = maze.Pathfinding(currentTile, playerTile);
+
+            if (pathToPlayer.Count == 0)
+            {
+                ExitChase();
+                return;
+            }
+
+            targetTile = pathToPlayer[0];
+            targetPosition = maze.TileToWorld(targetTile);
+        }
     }
 
+    void EnterChase()
+    {
+        currentState = EnemyState.Chase;
+        blinkCoroutine = StartCoroutine(BlinkLoop());
+    }
+
+    void ExitChase()
+    {
+        pathToPlayer.Clear();
+        currentState = EnemyState.Patrol;
+
+        if (blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            blinkCoroutine = null;
+        }
+
+        spriteRenderer.enabled = true;
+    }
+
+    IEnumerator BlinkLoop()
+    {
+        while (true)
+        {
+            spriteRenderer.enabled = false;
+            yield return new WaitForSeconds(blinkInterval);
+            spriteRenderer.enabled = true;
+            yield return new WaitForSeconds(blinkInterval);
+        }
+    }
     void UpdateAnimator()
     {
         if (animator == null) return;
@@ -190,6 +264,7 @@ public class Enemy : MonoBehaviour
             if (onPlayerDamage)
             {
                 onPlayerDamage.Raise();
+                Destroy(this);
             }
             else
             {
@@ -202,5 +277,15 @@ public class Enemy : MonoBehaviour
     {
         currentTile = _maze.GetTile((int)transform.position.x, (int)transform.position.y);
         maze = _maze;
+    }
+
+    public void OnPlayerMask()
+    {
+        isPlayerMasked = true;
+    }
+
+    public void OnPlayerUnmask()
+    {
+        isPlayerMasked = false;
     }
 }

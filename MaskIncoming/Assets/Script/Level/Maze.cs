@@ -8,9 +8,9 @@ namespace Script.Level
         private int _width = 10;
         private int _height = 10;
         private float _cellSize = 1.0f;
-        
+
         private Tile[,] _grid;
-        
+
         public Maze(int width, int height, float cellSize)
         {
             _width = width;
@@ -19,8 +19,8 @@ namespace Script.Level
 
             _grid = new Tile[width, height];
             for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
-                _grid[x, y] = new Tile(x, y);
+                for (int y = 0; y < height; y++)
+                    _grid[x, y] = new Tile(x, y);
         }
 
         public bool IsValid(int x, int y)
@@ -79,6 +79,52 @@ namespace Script.Level
             int x = Mathf.FloorToInt(worldPos.x / _cellSize);
             int y = Mathf.FloorToInt(worldPos.y / _cellSize);
             return new Vector2Int(x, y);
+        }
+
+        public List<Tile> Pathfinding(Tile start, Tile end)
+        {
+            if (start == null || end == null || start == end)
+                return new List<Tile>();
+
+            var visited = new HashSet<Tile>();
+            var queue = new Queue<Tile>();
+            var cameFrom = new Dictionary<Tile, Tile>();
+
+            queue.Enqueue(start);
+            visited.Add(start);
+
+            while (queue.Count > 0)
+            {
+                Tile current = queue.Dequeue();
+
+                if (current == end)
+                    return ReconstructPath(cameFrom, start, end);
+
+                foreach (Tile neighbor in GetNeighbors(current))
+                {
+                    if (!visited.Contains(neighbor))
+                    {
+                        visited.Add(neighbor);
+                        cameFrom[neighbor] = current;
+                        queue.Enqueue(neighbor);
+                    }
+                }
+            }
+            return new List<Tile>();
+        }
+
+        private List<Tile> ReconstructPath(Dictionary<Tile, Tile> cameFrom, Tile start, Tile end)
+        {
+            var path = new List<Tile>();
+            Tile current = end;
+
+            while (current != start)
+            {
+                path.Add(current);
+                current = cameFrom[current];
+            }
+            path.Reverse();
+            return path;
         }
     }
 }
