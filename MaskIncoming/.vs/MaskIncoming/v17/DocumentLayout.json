@@ -7,7 +7,7 @@
       "RelativeMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\menuui\\mainmenu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|c:\\users\\domi2\\desktop\\ggj26\\global-game-jam-2026\\maskincoming\\assets\\script\\level\\collectitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|C:\\Users\\domi2\\Desktop\\GGJ26\\global-game-jam-2026\\MaskIncoming\\assets\\script\\level\\collectitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4B599D7-E741-FB06-5841-F88FC8B29E60}|Assembly-CSharp.csproj|solutionrelative:assets\\script\\level\\collectitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -59,8 +59,7 @@
               "RelativeToolTip": "Assets\\Script\\Level\\CollectItem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-31T18:54:17.289Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-31T18:54:17.289Z"
             },
             {
               "$type": "Document",
